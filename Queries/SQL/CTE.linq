@@ -8,7 +8,7 @@
   </Connection>
 </Query>
 
-WITH months(MonthNumber) AS
+WITH months(MonthNumber) AS --Recursive Common Table Expression
 (
     SELECT 0
     UNION ALL
