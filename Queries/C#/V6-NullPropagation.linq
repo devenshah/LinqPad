@@ -16,3 +16,5 @@ public class Logger
 		Console.WriteLine(message);
 	}
 }
+
+
