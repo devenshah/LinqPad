@@ -17,8 +17,25 @@ void Main()
 		new Person (1, Guid.NewGuid(), "Deven", new DateTime(1974,4,20), "Male"),
 		new Person (2, Guid.NewGuid(), "Suman", new DateTime(1973,11,16), "Female"),
 	};
-	var x = new XmlSerializer(people.GetType());
-	x.Serialize(Console.Out, people);
+
+	var rootAttribute = new XmlRootAttribute 
+	{
+		ElementName = "Employees"
+	};	
+	
+	//Change the root element name 
+	var x = new XmlSerializer(people.GetType(), rootAttribute); 
+	
+	//remove the namespace next to root element	
+	var emptyNamepsaces = new XmlSerializerNamespaces(new[] { XmlQualifiedName.Empty });
+
+	var settings = new XmlWriterSettings
+	{
+		//remove xml  declaration tab
+		OmitXmlDeclaration = true, 
+	};
+	
+	x.Serialize(Console.Out, people, emptyNamepsaces);
 }
 
 
