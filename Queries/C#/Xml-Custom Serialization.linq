@@ -18,13 +18,9 @@ void Main()
 		new Person (2, Guid.NewGuid(), "Suman", new DateTime(1973,11,16), "Female"),
 	};
 
-	var rootAttribute = new XmlRootAttribute 
-	{
-		ElementName = "Employees"
-	};	
+	var ctx = new SerializableContext {	People = people };
 	
-	//Change the root element name 
-	var x = new XmlSerializer(people.GetType(), rootAttribute); 
+	var x = new XmlSerializer(ctx.GetType()); 
 	
 	//remove the namespace next to root element	
 	var emptyNamepsaces = new XmlSerializerNamespaces(new[] { XmlQualifiedName.Empty });
@@ -33,11 +29,25 @@ void Main()
 	{
 		//remove xml  declaration tab
 		OmitXmlDeclaration = true, 
+		Indent = true
 	};
-	
-	x.Serialize(Console.Out, people, emptyNamepsaces);
+
+	using (var writer = XmlWriter.Create(Console.Out, settings))
+    {
+		x.Serialize(writer, ctx, emptyNamepsaces);
+	}
 }
 
+[XmlRoot("HumanResource")]
+public class SerializableContext
+{ 
+	[XmlAttribute]
+	public int Version { get; set; } = 1;
+	
+	[XmlArray("Employees")]
+	[XmlArrayItem("Employee")]
+	public List<Person> People { get; set; }
+}
 
 public class Person
 { 	
