@@ -1,0 +1,14 @@
+<Query Kind="Program" />
+
+void Main()
+{
+	var arr = new int[] { 4, 4, 1, 3, 2 };	
+	var output = string.Empty;
+	for (var i = arr.Length - 1; i >= 0; i--)
+	{
+		output += $"{arr[i]} ";
+	}
+	output.WL();
+}
+
+// Define other methods and classes here
