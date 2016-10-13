@@ -1,5 +1,12 @@
 <Query Kind="Program">
+  <NuGetReference>AutoMapper</NuGetReference>
   <Namespace>AutoMapper</Namespace>
+  <Namespace>AutoMapper.Configuration</Namespace>
+  <Namespace>AutoMapper.Configuration.Conventions</Namespace>
+  <Namespace>AutoMapper.Execution</Namespace>
+  <Namespace>AutoMapper.Mappers</Namespace>
+  <Namespace>AutoMapper.QueryableExtensions</Namespace>
+  <Namespace>AutoMapper.QueryableExtensions.Impl</Namespace>
 </Query>
 
 void Main()
@@ -21,7 +28,7 @@ void Main()
 
 	// Configure AutoMapper
 
-	Mapper.CreateMap<Order, OrderDto>();
+	Mapper.Initialize(cfg => cfg.CreateMap<Order, OrderDto>());
 
 	// Perform mapping
 

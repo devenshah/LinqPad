@@ -1,9 +1,10 @@
 <Query Kind="Program">
   <Connection>
-    <ID>3dfa1e2c-515c-4d32-8b8b-4fe1d2235ba0</ID>
+    <ID>c8bb2290-88aa-4023-bad0-be874bb7e0ed</ID>
     <Persist>true</Persist>
+    <Server>(localdb)\MSSQLLocalDB</Server>
     <Database>Northwind</Database>
-    <Server>.\SQLEXPRESS</Server>
+    <ShowServer>true</ShowServer>
   </Connection>
   <NuGetReference>AutoMapper</NuGetReference>
   <Namespace>AutoMapper</Namespace>
@@ -27,7 +28,7 @@ private void TestDtoToString()
 
 private void TestEmployeeMapToDto()
 {
-	Mapper.CreateMap<Employee, EmployeeDto>();
+	Mapper.Initialize(cfg => cfg.CreateMap<Employee, EmployeeDto>());
 	var e = new Employee()
 	{
 		Id = 33,
@@ -54,6 +55,13 @@ public class Employee
 	public Contact Contact { get; set; }	
 }
 
+public class Person
+{ 
+	public int Id { get; set; }
+	public string Name { get; set; }
+}
+
+
 public class EmployeeDto
 { 
 	public string Id { get; set; }
@@ -69,4 +77,3 @@ public class EmployeeDto
 		return string.Format($"Id: {Id}, Name: {PersonName}, Email: {ContactEmail}, Phone: {ContactPhone}");
 	}
 }
-

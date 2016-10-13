@@ -1,15 +1,16 @@
 <Query Kind="Program">
   <Connection>
-    <ID>3dfa1e2c-515c-4d32-8b8b-4fe1d2235ba0</ID>
+    <ID>c8bb2290-88aa-4023-bad0-be874bb7e0ed</ID>
     <Persist>true</Persist>
+    <Server>(localdb)\MSSQLLocalDB</Server>
     <Database>Northwind</Database>
-    <Server>.\SQLEXPRESS</Server>
+    <ShowServer>true</ShowServer>
   </Connection>
   <NuGetReference>AutoMapper</NuGetReference>
   <Namespace>AutoMapper</Namespace>
   <Namespace>AutoMapper.Configuration</Namespace>
-  <Namespace>AutoMapper.Impl</Namespace>
-  <Namespace>AutoMapper.Internal</Namespace>
+  <Namespace>AutoMapper.Configuration.Conventions</Namespace>
+  <Namespace>AutoMapper.Execution</Namespace>
   <Namespace>AutoMapper.Mappers</Namespace>
   <Namespace>AutoMapper.QueryableExtensions</Namespace>
   <Namespace>AutoMapper.QueryableExtensions.Impl</Namespace>
@@ -25,24 +26,24 @@ private void TestProjection()
 {
 	//Employees.Where(e => e.ReportsTo == null).Dump();
 
-	Mapper.CreateMap<Employees, EmployeeDto>()
-		.IgnoreAllUnmapped()
+	Mapper.Initialize(cfg => cfg.CreateMap<Employees, EmployeeDto>()
+		//.IgnoreAllUnmapped()
 		.ForMember(e => e.Id, o => o.MapFrom(s => s.EmployeeID))
 		.ForMember(e => e.Name, o => o.MapFrom(s => string.Join(" ", s.FirstName, s.LastName)))
-		.ForMember(e => e.Phone, o => o.MapFrom(s => s.HomePhone));
+		.ForMember(e => e.Phone, o => o.MapFrom(s => s.HomePhone)));
 	
 	
-	Employees.Where(e => e.ReportsTo == null).Project().To<EmployeeDto>().Dump("See λ/SQL tab, only projected fields are retrieved");
+	Employees.Where(e => e.ReportsTo == null).ProjectTo<EmployeeDto>().Dump("See λ/SQL tab, only projected fields are retrieved");
 }
 
-public static class MappingExpressionExtensions
-{
-	public static IMappingExpression<TSource, TDest> IgnoreAllUnmapped<TSource, TDest>(this IMappingExpression<TSource, TDest> expression)
-	{
-		expression.ForAllMembers(opt => opt.Ignore());
-		return expression;
-	}
-}
+//public static class MappingExpressionExtensions
+//{
+//	public static IMappingExpression<TSource, TDest> IgnoreAllUnmapped<TSource, TDest>(this IMappingExpression<TSource, TDest> expression)
+//	{
+//		expression.ForAllMembers(opt => opt.Ignore());
+//		return expression;
+//	}
+//}
 
 public class EmployeeDto
 {

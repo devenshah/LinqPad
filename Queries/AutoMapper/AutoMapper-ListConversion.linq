@@ -1,15 +1,16 @@
 <Query Kind="Program">
   <Connection>
-    <ID>3dfa1e2c-515c-4d32-8b8b-4fe1d2235ba0</ID>
+    <ID>c8bb2290-88aa-4023-bad0-be874bb7e0ed</ID>
     <Persist>true</Persist>
+    <Server>(localdb)\MSSQLLocalDB</Server>
     <Database>Northwind</Database>
-    <Server>.\SQLEXPRESS</Server>
+    <ShowServer>true</ShowServer>
   </Connection>
   <NuGetReference>AutoMapper</NuGetReference>
   <Namespace>AutoMapper</Namespace>
   <Namespace>AutoMapper.Configuration</Namespace>
-  <Namespace>AutoMapper.Impl</Namespace>
-  <Namespace>AutoMapper.Internal</Namespace>
+  <Namespace>AutoMapper.Configuration.Conventions</Namespace>
+  <Namespace>AutoMapper.Execution</Namespace>
   <Namespace>AutoMapper.Mappers</Namespace>
   <Namespace>AutoMapper.QueryableExtensions</Namespace>
   <Namespace>AutoMapper.QueryableExtensions.Impl</Namespace>
@@ -17,21 +18,21 @@
 
 void Main()
 {
-	Mapper.CreateMap<Employees, EmployeeDto>()
+	Mapper.Initialize(cfg => cfg.CreateMap<Employees, EmployeeDto>()
 			.ForMember(e => e.Id, o => o.MapFrom(s => s.EmployeeID))
 			.ForMember(e => e.Name, o => o.MapFrom(s => string.Join(" ", s.FirstName, s.LastName)))
 			.ForMember(e => e.Phone, o => o.MapFrom(s => s.HomePhone))
 			.ForMember(e => e.ContactEmail, o => o.Ignore())
 			.ForMember(e => e.IsManager, o => { o.MapFrom(s => s.ReportsTo); o.NullSubstitute("Yes"); })
-			.ForMember(dest => dest.Age, opt => opt.ResolveUsing<AgeResolver>());
+			.ForMember(dest => dest.Age, opt => opt.ResolveUsing<AgeResolver>()));
 
 	var emps = Employees.Where(e => e.Country != "USA").ToList();
 	Mapper.Map<List<Employees>, IEnumerable<EmployeeDto>>(emps).Dump();
 }
 
-public class AgeResolver : ValueResolver<Employees, int>
+public class AgeResolver : IValueResolver<Employees, EmployeeDto, int?>
 {
-	protected override int ResolveCore(Employees source)
+	public int? Resolve(Employees source, EmployeeDto destination, int? member, ResolutionContext context)
 	{
 		if (source.BirthDate.HasValue == false) return 1;
 		return DateTime.Today.Year - source.BirthDate.Value.Year;
