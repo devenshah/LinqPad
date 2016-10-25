@@ -2,15 +2,6 @@
   <NuGetReference>AutoMapper</NuGetReference>
   <NuGetReference>Unity</NuGetReference>
   <NuGetReference>WindowsAzure.ServiceBus</NuGetReference>
-  <Namespace>Microsoft.Azure</Namespace>
-  <Namespace>Microsoft.Practices.ObjectBuilder2</Namespace>
-  <Namespace>Microsoft.Practices.ServiceLocation</Namespace>
-  <Namespace>Microsoft.Practices.Unity</Namespace>
-  <Namespace>Microsoft.Practices.Unity.Configuration</Namespace>
-  <Namespace>Microsoft.Practices.Unity.Configuration.ConfigurationHelpers</Namespace>
-  <Namespace>Microsoft.Practices.Unity.ObjectBuilder</Namespace>
-  <Namespace>Microsoft.Practices.Unity.StaticFactory</Namespace>
-  <Namespace>Microsoft.Practices.Unity.Utility</Namespace>
   <Namespace>Microsoft.ServiceBus</Namespace>
   <Namespace>Microsoft.ServiceBus.Channels</Namespace>
   <Namespace>Microsoft.ServiceBus.Common</Namespace>
@@ -28,11 +19,11 @@
 void Main()
 {
 	sendTestMessage();
-	receiveTestMessage();
+	//receiveTestMessage();
 }
 
-private readonly string _queueConnectionString  = "Endpoint=sb://etech-onprem-dev.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=8etT4mg3BVSBPGfoi72zSGSYBeaKR8v3P5jk2etKTH0=";
-private readonly string _queueName = "test";
+private readonly string _queueConnectionString  = "Endpoint=sb://functionspoc.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=0Ig9rz7eSXLMDvJKYZE1MqCUsS0GqBlgKT5Q+cgjG9A=";
+private readonly string _queueName = "RequestQueue";
 
 private QueueClient _queueClient;
 
@@ -50,7 +41,10 @@ void receiveTestMessage()
 void sendTestMessage()
 {
 	var client = QueueClient.CreateFromConnectionString(_queueConnectionString, _queueName);
-	client.Send(new BrokeredMessage("Hello World!"));
+	for (var i = 10; i > 0; i--)
+	{
+		client.Send(new BrokeredMessage($"{i.ToString()} Bazinga!"));
+	}
 }
 
 
