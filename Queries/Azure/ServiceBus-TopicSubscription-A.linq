@@ -1,5 +1,6 @@
 <Query Kind="Program">
   <NuGetReference>AutoMapper</NuGetReference>
+  <NuGetReference>Newtonsoft.Json</NuGetReference>
   <NuGetReference>Unity</NuGetReference>
   <NuGetReference>WindowsAzure.ServiceBus</NuGetReference>
   <Namespace>Microsoft.ServiceBus</Namespace>
@@ -16,6 +17,7 @@
   <Namespace>Microsoft.ServiceBus.Web</Namespace>
   <Namespace>System</Namespace>
   <Namespace>System.Threading.Tasks</Namespace>
+  <Namespace>Newtonsoft.Json</Namespace>
 </Query>
 
 const string SchoolUpdate = "SchoolUpdate";
@@ -28,7 +30,18 @@ static CancellationTokenSource tokenSource = new CancellationTokenSource();
 
 void Main()
 {
-	SendMessages();
+	SendMessage(GetSchoolUpdateMessage());
+}
+
+BrokeredMessage GetSchoolUpdateMessage()
+{
+	return new BrokeredMessage(
+		JsonConvert.SerializeObject(
+			new SchoolUpdateMessage() {
+				SchoolGuid = Guid.NewGuid(),
+				SchoolName = "FALTU",
+				UsesSimsPrimary = true
+			}));
 }
 
 void FullProcess()
@@ -38,7 +51,7 @@ void FullProcess()
 	var tasks = new Task[3];
 	tasks[0] = Task.Run(() => ListenToAllMessages());
 	tasks[1] = Task.Run(() => ListenToFilteredMessages());
-	tasks[2] = Task.Run(() => SendMessages())
+	tasks[2] = Task.Run(() => SendMessages(GetMessages()))
 		//once the messages are sent wait for 30 seconds
 		.ContinueWith((t) =>
 		{
@@ -79,19 +92,41 @@ void CreateTopicAndSubscriptions()
 	}
 }
 
-void SendMessages()
+void SendMessages(List<BrokeredMessage> messages)
 {
-	var client = TopicClient.CreateFromConnectionString(connectionString, SchoolUpdate);
-
-	GetMessages().ForEach(msg => {
-		client.Send(msg);
+	messages.ForEach(msg => {
+		SendMessage(msg);
 	});
 	Console.WriteLine("Finished sending all messages");
 }
 
+void SendMessage(BrokeredMessage message)
+{
+	var client = TopicClient.CreateFromConnectionString(connectionString, SchoolUpdate);
+	client.Send(message);
+}
+
+public class SchoolUpdateMessage
+{
+	public string IdentitySource { get; set; }
+	public bool IsActive { get; set; }
+	public bool IsDeleted { get; set; }
+	public bool IsTestSchool { get; set; }
+	public string LeaNumber { get; set; }
+	public IEnumerable<string> Licenses { get; set; }
+	public string Postcode { get; set; }
+	public string PrimaryEmailAddress { get; set; }
+	public Guid SchoolGuid { get; set; }
+	public int SchoolId { get; set; }
+	public string SchoolName { get; set; }
+	public string SchoolNumber { get; set; }
+	public bool UsesSimsPrimary { get; set; }
+}
+
 List<BrokeredMessage> GetMessages()
 {
-	var result = new List<BrokeredMessage>();
+	var result = new List<BrokeredMessage>();	
+	
 	var msg3 = new BrokeredMessage("Third Message");
 	msg3.MessageId = "3";
 	msg3.Properties["NewSchool"] = "1";
