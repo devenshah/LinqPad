@@ -16,47 +16,121 @@
   </AppConfig>
 </Query>
 
+TableStorageServiceBase<SchoolInfo> svc;
 void Main()
 {
 	var connectionString  = CloudConfigurationManager.GetSetting("StorageConnectionString");
 	connectionString.Dump();
 	
-	var storage = CloudStorageAccount.Parse(connectionString);
-	
-	var tableClient = storage.CreateCloudTableClient();
-	
-	var table = tableClient.GetTableReference("School");
-	
-	table.CreateIfNotExists();
-	
-	var id = Guid.NewGuid();
-	var school1 = new School(id);
-	school1.Name = "New Bradwell";
-	school1.NextSyncTime = DateTimeOffset.UtcNow.AddHours(1);
-	
-	var insertOperation = TableOperation.Insert(school1);
-	table.Execute(insertOperation);
+	svc = new TableStorageServiceBase<SchoolInfo>();
+	svc.Initialize(connectionString);
 	
 	
-	var query = new TableQuery<School>();
-	var data = table.ExecuteQuery(query);
+	InsertDataAndUpdate();
 	
+	
+	var data = svc.GetAll();	
 	data.Dump();
 }
 
+void CycleData()
+{
+	var data = svc.GetAll();
+}
 
-public class School : TableEntity
-{ 
-	public School(Guid schoolId)
-	{
-		this.RowKey = schoolId.ToString();		
-		this.PartitionKey = schoolId.ToString();
-	}
-	public School()
-	{
-			
-	}
-	public string Name { get; set; }
+void InsertDataAndUpdate()
+{
+	var id = InsertRecord("New Bradwell School");
+	InsertRecord("Gifford Park");
+	InsertRecord("Sir Henry Floyd");
+
+	UpdateSyncDate();
+}
+
+Guid InsertRecord(string name)
+{
+	var id = Guid.NewGuid();
+	var school1 = new SchoolInfo(id, name);
+	svc.InsertOrUpdate(school1);
+	return id;
+}
+
+void UpdateSyncDate()
+{
+	var interval = 1;
+	var data = svc.GetAll().ToList();
+	data.ForEach(s =>
+	{		
+		s.LastSyncTimeStamp = DateTimeOffset.UtcNow.AddSeconds(interval * 10);
+		interval++;
+		svc.InsertOrUpdate(s);
+	});
 	
-	public DateTimeOffset NextSyncTime { get; set; }
+}
+
+
+public class TableStorageServiceBase<T> where T : TableEntity, new()
+{
+	private CloudTable _tableStorage;
+
+	public void Initialize(string connectionString)
+	{
+		var tableName = typeof(T).Name;
+		_tableStorage = GetCloudTable(connectionString, tableName);
+		DeleteAll();
+	}
+
+	public void InsertOrUpdate(T entity)
+	{
+		var operation = TableOperation.InsertOrReplace(entity);
+		_tableStorage.Execute(operation);
+	}
+
+	public void DeleteAll()
+	{		
+		var entities = GetAll().ToList();
+		if (entities.Any())
+		{
+			var batchOperation = new TableBatchOperation();
+			entities.ForEach(entity => batchOperation.Delete(entity));
+			_tableStorage.ExecuteBatch(batchOperation);
+		}
+	}
+	
+	public List<T> GetAll()
+	{
+		return _tableStorage.CreateQuery<T>().ToList();
+	}
+	
+	public TableQuery<T> Queryable()
+	{
+		return _tableStorage.CreateQuery<T>();
+	}
+
+	private CloudTable GetCloudTable(string connectionString, string tableName)
+	{
+		var storageAccount = CloudStorageAccount.Parse(connectionString);
+		var tableClient = storageAccount.CreateCloudTableClient();
+		var tableStorage = tableClient.GetTableReference(tableName);
+		tableStorage.CreateIfNotExists();		
+		return tableStorage;
+	}
+}
+
+public class SchoolInfo : TableEntity
+{
+    public SchoolInfo()
+    { }
+
+    public SchoolInfo(Guid schoolId, string name)
+    {
+        RowKey = schoolId.ToString();
+        PartitionKey = this.GetType().FullName;
+		Name = name;
+	}
+
+	public string Name { get; set; }
+
+	public DateTimeOffset? LastSyncTimeStamp { get; set; }
+
 }
