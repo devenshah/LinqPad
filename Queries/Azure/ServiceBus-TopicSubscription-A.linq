@@ -24,7 +24,7 @@ const string SchoolUpdate = "SchoolUpdate";
 const string AllMessages = "AllMessages";
 const string NewSchool = "NewSchool";
 
-const string connectionString = "Endpoint=sb://simslabs-servicebus-backbone-dks.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=sR9KCdZNdNDhWspLsAlSccdHHnWQMvX51irXuqh6amU=";
+const string connectionString = "Endpoint=sb://simslabs-servicebus-backbone-local.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=Y31in3tSbHBBBtixD7CXd4YkOG5PNkn5aVRyXnow5jQ=";
 
 static CancellationTokenSource tokenSource = new CancellationTokenSource();
 
@@ -38,9 +38,9 @@ BrokeredMessage GetSchoolUpdateMessage()
 	return new BrokeredMessage(
 		JsonConvert.SerializeObject(
 			new SchoolUpdateMessage() {
-				SchoolGuid = Guid.NewGuid(),
+				SchoolGuid = Guid.Parse("4c86d0da-ed06-46bd-a3c7-c0386a3a44e1"),
 				SchoolName = "FALTU",
-				UsesSimsPrimary = true
+				UsesSimsPrimary = false
 			}));
 }
 

@@ -52,6 +52,10 @@ public static class MyExtensions
 		}
 	}
 
+	public static void Log(this object obj)
+	{
+		Console.WriteLine(obj);
+	}
 
 
 }
@@ -65,5 +69,3 @@ public class Person
 	[DataMember]
 	public DateTimeOffset DOB { get; set; }
 }
-
-
