@@ -57,6 +57,10 @@ public static class MyExtensions
 		Console.WriteLine(obj);
 	}
 
+	public static void WL(this object obj)
+	{
+		Console.WriteLine(obj);
+	}
 
 }
 

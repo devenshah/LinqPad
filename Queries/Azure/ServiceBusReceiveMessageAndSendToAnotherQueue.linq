@@ -59,5 +59,3 @@ void sendTestMessage(BrokeredMessage message, string queuePath)
 		throw;
 	}
 }
-
-

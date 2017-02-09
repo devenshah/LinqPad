@@ -24,14 +24,15 @@ const string SchoolUpdate = "SchoolUpdate";
 const string AllMessages = "AllMessages";
 const string NewSchool = "NewSchool";
 
-const string connectionString = //"Endpoint=sb://simslabs-servicebus-backbone-local.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=Y31in3tSbHBBBtixD7CXd4YkOG5PNkn5aVRyXnow5jQ=";
-"Endpoint=sb://simslabs-servicebus-backbone-dev.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=aNwEglxTnVbSxzdLqECG1bdbxhqeYoq4hjZcYhj0BKs=";
+const string connectionString = "Endpoint=sb://simslabs-servicebus-backbone-local.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=Y31in3tSbHBBBtixD7CXd4YkOG5PNkn5aVRyXnow5jQ=";
+//"Endpoint=sb://simslabs-servicebus-backbone-dev.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=aNwEglxTnVbSxzdLqECG1bdbxhqeYoq4hjZcYhj0BKs=";
 //"Endpoint=sb://simscloudintegration-test.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=3d+Cxo7VbfgYuky3ACYwxjxMl/SMogSo8ajFtm1FZ/I=";
 
 static CancellationTokenSource tokenSource = new CancellationTokenSource();
 
 void Main()
 {
+	//SendMessage(new BrokeredMessage("faulty message"));
 	SendMessage(GetSchoolUpdateMessage());
 }
 
@@ -40,10 +41,10 @@ BrokeredMessage GetSchoolUpdateMessage()
 	return new BrokeredMessage(
 		JsonConvert.SerializeObject(
 			new SchoolUpdateMessage() {
-				SchoolGuid = Guid.Parse("4c86d0da-ed06-46bd-a3c7-c0386a3a44e1"),
-				SchoolName = "White Castle",
+				SchoolGuid = Guid.NewGuid(), //Guid.Parse("4c86d0da-ed06-46bd-a3c7-c0386a3a44e1"),
+				SchoolName = "School of Rock",
 				UsesSimsPrimary = true,
-				LeaNumber = "000",
+				LeaNumber = "120",
 				SchoolNumber = "6666",
 				Postcode = "MK44 3JZ"
 			}));

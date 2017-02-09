@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<CodeSnippets xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+	<CodeSnippet Format="1.0.0">
+		<Header>
+			<Title>co (Console.WriteLine)</Title>
+			<Shortcut>co</Shortcut>
+			<Description>Console.WriteLine</Description>
+			<SnippetTypes>
+				<SnippetType>Expansion</SnippetType>
+			</SnippetTypes>
+		</Header>
+		<Snippet>
+			<Code Language="csharp">Console.WriteLine($end$);</Code >
+		</Snippet>
+	</CodeSnippet>	
+	<CodeSnippet>
+		<Header>
+			<Title>ro (private readonly)</Title>
+			<Shortcut>ro</Shortcut>
+			<SnippetTypes>
+				<SnippetType>Expansion</SnippetType>
+			</SnippetTypes>
+		</Header>
+		<Snippet>
+			<Declarations>
+				<Literal>
+					<ID>type</ID>
+					<ToolTip>Property type</ToolTip>
+					<Default>string</Default>
+				</Literal>
+				<Literal> 
+					<ID>name</ID> 
+					<ToolTip>Property name</ToolTip> 
+					<Default>name</Default> 
+				</Literal>
+			</Declarations>
+			<Code Language="csharp">private readonly $type$ _$name$;</Code >
+		</Snippet>
+	</CodeSnippet>
+</CodeSnippets>
+
+
