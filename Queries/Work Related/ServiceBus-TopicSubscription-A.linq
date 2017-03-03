@@ -24,7 +24,9 @@ const string SchoolUpdate = "SchoolUpdate";
 const string AllMessages = "AllMessages";
 const string NewSchool = "NewSchool";
 
-const string connectionString = "Endpoint=sb://simslabs-servicebus-backbone-local.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=Y31in3tSbHBBBtixD7CXd4YkOG5PNkn5aVRyXnow5jQ=";
+const string connectionString = 
+//"Endpoint=sb://simscloudintegration-local.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=nxLUUJaEIBM4A9WoSKSDdQbAD1g1MV0KU5Q0hbmD5dI=";
+"Endpoint=sb://simslabs-servicebus-backbone-local.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=Y31in3tSbHBBBtixD7CXd4YkOG5PNkn5aVRyXnow5jQ=";
 //"Endpoint=sb://simslabs-servicebus-backbone-dev.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=aNwEglxTnVbSxzdLqECG1bdbxhqeYoq4hjZcYhj0BKs=";
 //"Endpoint=sb://simscloudintegration-test.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=3d+Cxo7VbfgYuky3ACYwxjxMl/SMogSo8ajFtm1FZ/I=";
 
@@ -32,22 +34,80 @@ static CancellationTokenSource tokenSource = new CancellationTokenSource();
 
 void Main()
 {
+	//var topic = "temp-topic";
+	//var subscription = "temp";
+	//MoveMessageToDeadLetter(topic, subscription);
 	//SendMessage(new BrokeredMessage("faulty message"));
-	SendMessage(GetSchoolUpdateMessage());
+	//SendMessage(GetSchoolUpdateMessage(), SchoolUpdate);
+	SendSchoolSyncMessage();
 }
+
+BrokeredMessage GetSchoolSyncMessage()
+{
+	var msg = new BrokeredMessage(
+		JsonConvert.SerializeObject(
+			new SchoolUpdateMessage()
+			{
+				//SchoolGuid = Guid.NewGuid(),
+				SchoolGuid = Guid.Parse("d69cf4c2-6341-4c58-af34-416a24c2fbaa"),
+				SchoolName = "Gurukul School",
+				UsesSimsPrimary = true,
+				LeaNumber = "223",
+				SchoolNumber = "4321",
+				Postcode = "Mumbai"
+			}));
+	//msg.Log();
+	return msg;
+}
+
 
 BrokeredMessage GetSchoolUpdateMessage()
 {
-	return new BrokeredMessage(
+	var msg = new BrokeredMessage(
 		JsonConvert.SerializeObject(
 			new SchoolUpdateMessage() {
-				SchoolGuid = Guid.NewGuid(), //Guid.Parse("4c86d0da-ed06-46bd-a3c7-c0386a3a44e1"),
-				SchoolName = "School of Rock",
+				//SchoolGuid = Guid.NewGuid(),
+				SchoolGuid = Guid.Parse("d69cf4c2-6341-4c58-af34-416a24c2fbaa"),
+				SchoolName = "Gurukul School",
 				UsesSimsPrimary = true,
-				LeaNumber = "120",
-				SchoolNumber = "6666",
-				Postcode = "MK44 3JZ"
+				LeaNumber = "223",
+				SchoolNumber = "4321",
+				Postcode = "Mumbai"
 			}));
+			//msg.Log();
+	return msg;
+}
+
+void SendMessage(BrokeredMessage message)
+{
+	var client = TopicClient.CreateFromConnectionString(connectionString, SchoolUpdate);
+	client.Send(message);
+}
+
+void SendSchoolSyncMessage()
+{
+	var _connectionString="Endpoint=sb://simscloudintegration-local.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=V7vhSIrLznscLq0zBt5SNDbKAfgHt/bHupj8QAXeUIc=";
+	var _queue = "syncschool-agorapastoral";
+	var client = QueueClient.CreateFromConnectionString(_connectionString, _queue);
+	var message = new BrokeredMessage(JsonConvert.SerializeObject(Guid.NewGuid()));
+	client.Send(message);
+}
+
+
+void MoveMessageToDeadLetter(string topic, string subscription)
+{
+	var client = SubscriptionClient.CreateFromConnectionString(connectionString, topic, subscription);
+	Console.WriteLine("Started listening to all messages");
+	var msg = client.Receive(TimeSpan.FromSeconds(5));
+	if (msg == null) return;
+	msg.DeadLetter();
+}
+
+
+void SendMessage(BrokeredMessage message, string topic)
+{
+	var client = TopicClient.CreateFromConnectionString(connectionString, topic);
+	client.Send(message);
 }
 
 void FullProcess()
@@ -106,12 +166,6 @@ void SendMessages(List<BrokeredMessage> messages)
 	Console.WriteLine("Finished sending all messages");
 }
 
-void SendMessage(BrokeredMessage message)
-{
-	var client = TopicClient.CreateFromConnectionString(connectionString, SchoolUpdate);
-	client.Send(message);
-}
-
 public class SchoolUpdateMessage
 {
 	public string IdentitySource { get; set; }
@@ -134,17 +188,14 @@ List<BrokeredMessage> GetMessages()
 	var result = new List<BrokeredMessage>();	
 	
 	var msg3 = new BrokeredMessage("Third Message");
-	msg3.MessageId = "3";
 	msg3.Properties["NewSchool"] = "1";
 	result.Add(msg3);
 
 	var msg2 = new BrokeredMessage("Second Message");
-	msg2.MessageId = "2";
 	msg2.Properties["NewSchool"] = "0";
 	result.Add(msg2);
 	
 	var msg1 = new BrokeredMessage("First Message");
-	msg1.MessageId = "1";
 	msg1.Properties["NewSchool"] = "1";
 	result.Add(msg1);
 	
