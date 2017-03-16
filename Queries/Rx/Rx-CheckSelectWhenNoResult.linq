@@ -1,7 +1,6 @@
 <Query Kind="Program">
   <Connection>
     <ID>60408c34-3117-44f3-909d-bba77b66afde</ID>
-    <Persist>true</Persist>
     <Server>etech-dev01</Server>
     <SqlSecurity>true</SqlSecurity>
     <UserName>sa</UserName>
@@ -47,4 +46,3 @@ private IObservable<Lot> GetData()
 					Console.WriteLine("dsdddd");
 				}).Select(l => l);
 }
-

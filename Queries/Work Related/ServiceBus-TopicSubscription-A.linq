@@ -25,9 +25,9 @@ const string AllMessages = "AllMessages";
 const string NewSchool = "NewSchool";
 
 const string connectionString = 
-//"Endpoint=sb://simscloudintegration-local.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=nxLUUJaEIBM4A9WoSKSDdQbAD1g1MV0KU5Q0hbmD5dI=";
-"Endpoint=sb://simslabs-servicebus-backbone-local.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=Y31in3tSbHBBBtixD7CXd4YkOG5PNkn5aVRyXnow5jQ=";
-//"Endpoint=sb://simslabs-servicebus-backbone-dev.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=aNwEglxTnVbSxzdLqECG1bdbxhqeYoq4hjZcYhj0BKs=";
+"Endpoint=sb://simscloudintegration-local.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=mw+BmRzVMP1J0UTHfn1zFbd2e7KHqMy89Rg/2oFWU2s=";
+//"Endpoint=sb://simslabs-servicebus-backbone-local.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=Y31in3tSbHBBBtixD7CXd4YkOG5PNkn5aVRyXnow5jQ=";
+//"Endpoint=sb://simscloudintegration-dev.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=+pYNGFKLfY8eKYKHh1cw8JAPDj+8W6kzQ/QhtX7B6cc=";
 //"Endpoint=sb://simscloudintegration-test.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=3d+Cxo7VbfgYuky3ACYwxjxMl/SMogSo8ajFtm1FZ/I=";
 
 static CancellationTokenSource tokenSource = new CancellationTokenSource();
@@ -39,7 +39,7 @@ void Main()
 	//MoveMessageToDeadLetter(topic, subscription);
 	//SendMessage(new BrokeredMessage("faulty message"));
 	//SendMessage(GetSchoolUpdateMessage(), SchoolUpdate);
-	SendSchoolSyncMessage();
+	SendSchoolSyncMessage();	
 }
 
 BrokeredMessage GetSchoolSyncMessage()
@@ -60,15 +60,14 @@ BrokeredMessage GetSchoolSyncMessage()
 	return msg;
 }
 
-
 BrokeredMessage GetSchoolUpdateMessage()
 {
 	var msg = new BrokeredMessage(
 		JsonConvert.SerializeObject(
 			new SchoolUpdateMessage() {
 				//SchoolGuid = Guid.NewGuid(),
-				SchoolGuid = Guid.Parse("d69cf4c2-6341-4c58-af34-416a24c2fbaa"),
-				SchoolName = "Gurukul School",
+				SchoolGuid = Guid.Parse("f2e1813a-b266-42f2-b786-43e1a5bc3da1"),
+				SchoolName = "Partner Api School",
 				UsesSimsPrimary = true,
 				LeaNumber = "223",
 				SchoolNumber = "4321",
@@ -86,10 +85,10 @@ void SendMessage(BrokeredMessage message)
 
 void SendSchoolSyncMessage()
 {
-	var _connectionString="Endpoint=sb://simscloudintegration-local.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=V7vhSIrLznscLq0zBt5SNDbKAfgHt/bHupj8QAXeUIc=";
+	var _connectionString="Endpoint=sb://simscloudintegration-local.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=mw+BmRzVMP1J0UTHfn1zFbd2e7KHqMy89Rg/2oFWU2s=";
 	var _queue = "syncschool-agorapastoral";
-	var client = QueueClient.CreateFromConnectionString(_connectionString, _queue);
-	var message = new BrokeredMessage(JsonConvert.SerializeObject(Guid.NewGuid()));
+	var client = QueueClient.CreateFromConnectionString(connectionString, _queue);
+	var message = new BrokeredMessage(JsonConvert.SerializeObject(Guid.Parse("f2e1813a-b266-42f2-b786-43e1a5bc3da1")));
 	client.Send(message);
 }
 

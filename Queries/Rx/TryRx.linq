@@ -1,8 +1,5 @@
 <Query Kind="Statements">
-  <Reference>&lt;CommonApplicationData&gt;\LINQPad\References\System.Reactive.Core.dll</Reference>
-  <Reference>&lt;CommonApplicationData&gt;\LINQPad\References\System.Reactive.Interfaces.dll</Reference>
-  <Reference>&lt;CommonApplicationData&gt;\LINQPad\References\System.Reactive.Linq.dll</Reference>
-  <Reference>&lt;CommonApplicationData&gt;\LINQPad\References\System.Reactive.PlatformServices.dll</Reference>
+  <NuGetReference>System.Reactive</NuGetReference>
   <Namespace>System</Namespace>
   <Namespace>System.Reactive</Namespace>
   <Namespace>System.Reactive.Concurrency</Namespace>
