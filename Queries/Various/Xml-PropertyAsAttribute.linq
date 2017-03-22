@@ -12,7 +12,8 @@ void Main()
 		surname = "Shah",
 		
 	};
-	SerializeObjectUsingWriter(obj, @"d:\agora\temp\student.xml");
+	//SerializeObjectUsingWriter(obj, @"d:\agora\temp\student.xml");
+	SerializeObjectToString(obj,"http://www.sims.co.uk/CCP/TransferStudent").Dump();
 }
 
 private static void ValidateXml()
@@ -61,6 +62,30 @@ private static void SerializeObject<T>(T serializableObject, string fileName)
 	catch (Exception)
 	{
 		//Log exception here
+	}
+}
+
+private static string SerializeObjectToString<T>(T serializableObject, string nameSpace)
+{
+	if (serializableObject == null)
+	{
+		return null;
+	}
+
+	var serializer = new XmlSerializer(serializableObject.GetType(), nameSpace);
+
+	using (var writer = new StringWriter())
+	{
+		try
+		{
+			serializer.Serialize(writer, serializableObject);
+		}
+		catch (Exception)
+		{
+			//Log exception here
+			return null;
+		}
+		return writer.ToString();
 	}
 }
 
