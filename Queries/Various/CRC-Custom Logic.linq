@@ -88,7 +88,7 @@ class Crc32Calculator
 	/// <summary>
 	/// Initialise CRC-32 value - called before first call to Calculate.
 	/// </summary>
-	public uint Initialize()
+	private uint Initialize()
 	{
 		return 0xffffffff;
 	}
@@ -98,7 +98,7 @@ class Crc32Calculator
 	/// </summary>
 	/// <param name="crc32">The CRC-32 value (so far)</param>
 	/// <param name="buffer">The buffer to calculate from</param>
-	public uint Calculate(uint crc32, IEnumerable<byte> buffer)
+	private uint Calculate(uint crc32, IEnumerable<byte> buffer)
 	{
 		foreach (byte b in buffer)
 		{
@@ -117,7 +117,7 @@ class Crc32Calculator
 	/// Finalise CRC-32 value - called after last call to Calculate.
 	/// </summary>
 	/// <param name="crc32">The CRC-32 value</param>
-	public uint Finalize(uint crc32)
+	private uint Finalize(uint crc32)
 	{
 		return crc32 ^ 0xffffffff;
 	}
