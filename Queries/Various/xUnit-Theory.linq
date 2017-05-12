@@ -22,11 +22,20 @@ public class GetCompetitiveQuoteTest
 		var output = sut.GetEvenNumbers(input);
 		Assert.Equal(expectedOutput, output);
 	}
-	
+
+	[Theory,
+	InlineData("goodnight moon", "moon", true),
+	InlineData("hello world", "hi", false)]
+	public void Contains(string input, string sub, bool expected)
+	{
+		var actual = input.Contains(sub);
+		Assert.Equal(expected, actual);
+	}
+
 	[Fact]
 	public void ShouldFail()
 	{
-		Assert.True(false);
+		Assert.True(true);
 	}
 }
 
