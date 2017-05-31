@@ -1,7 +1,6 @@
 <Query Kind="SQL">
   <Connection>
     <ID>9d163a45-8c54-4ee3-8417-d1a85b87cc50</ID>
-    <Persist>true</Persist>
     <Server>localsql</Server>
     <Database>SmartPropertyHubEC.Database</Database>
     <ShowServer>true</ShowServer>

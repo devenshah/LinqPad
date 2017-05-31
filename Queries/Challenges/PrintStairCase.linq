@@ -13,7 +13,7 @@ void PrintStairCase(int n)
 		var str = string.Empty;
 		for (var j = 1; j < n; j++)
 		{
-			str += "-";
+			str += " ";
 		}
 		for (var x = 0; x < i; x++)
 		{

@@ -20,12 +20,12 @@
   <Namespace>Newtonsoft.Json</Namespace>
 </Query>
 
-const string SchoolUpdate = "SchoolUpdate";
 const string AllMessages = "AllMessages";
 const string NewSchool = "NewSchool";
+static Guid SchoolId = Guid.Parse("f2e1813a-b266-42f2-b786-43e1a5bc3da1");
 
-const string connectionString = 
-"Endpoint=sb://simscloudintegration-local.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=mw+BmRzVMP1J0UTHfn1zFbd2e7KHqMy89Rg/2oFWU2s=";
+//const string connectionString = 
+//"Endpoint=sb://simscloudintegration-local.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=mw+BmRzVMP1J0UTHfn1zFbd2e7KHqMy89Rg/2oFWU2s=";
 //"Endpoint=sb://simslabs-servicebus-backbone-local.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=Y31in3tSbHBBBtixD7CXd4YkOG5PNkn5aVRyXnow5jQ=";
 //"Endpoint=sb://simscloudintegration-dev.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=+pYNGFKLfY8eKYKHh1cw8JAPDj+8W6kzQ/QhtX7B6cc=";
 //"Endpoint=sb://simscloudintegration-test.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=3d+Cxo7VbfgYuky3ACYwxjxMl/SMogSo8ajFtm1FZ/I=";
@@ -34,12 +34,26 @@ static CancellationTokenSource tokenSource = new CancellationTokenSource();
 
 void Main()
 {
-	//var topic = "temp-topic";
-	//var subscription = "temp";
-	//MoveMessageToDeadLetter(topic, subscription);
-	//SendMessage(new BrokeredMessage("faulty message"));
-	//SendMessage(GetSchoolUpdateMessage(), SchoolUpdate);
-	SendSchoolSyncMessage();	
+	SendSchoolSyncMessage();
+	//SendVerifySchoolMessage();	
+}
+
+void SendSchoolSyncMessage()
+{
+	var connectionString = "Endpoint=sb://simscloudintegration-local.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=mw+BmRzVMP1J0UTHfn1zFbd2e7KHqMy89Rg/2oFWU2s=";
+	var queue = "syncschool-agorapastoral";
+	var client = QueueClient.CreateFromConnectionString(connectionString, queue);
+	var message = new BrokeredMessage(JsonConvert.SerializeObject(SchoolId));
+	client.Send(message);
+}
+
+void SendVerifySchoolMessage()
+{
+	var connectionString = "Endpoint=sb://simscloudintegration-local.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=mw+BmRzVMP1J0UTHfn1zFbd2e7KHqMy89Rg/2oFWU2s=";
+	var topicName = "verifyschool";
+	var client = TopicClient.CreateFromConnectionString(connectionString, topicName); 
+	var message = new BrokeredMessage(JsonConvert.SerializeObject(SchoolId));
+	client.Send(message);
 }
 
 BrokeredMessage GetSchoolSyncMessage()
@@ -49,64 +63,35 @@ BrokeredMessage GetSchoolSyncMessage()
 			new SchoolUpdateMessage()
 			{
 				//SchoolGuid = Guid.NewGuid(),
-				SchoolGuid = Guid.Parse("d69cf4c2-6341-4c58-af34-416a24c2fbaa"),
+				SchoolGuid = SchoolId,
 				SchoolName = "Gurukul School",
 				UsesSimsPrimary = true,
-				LeaNumber = "223",
-				SchoolNumber = "4321",
+				LeaNumber = "123",
+				SchoolNumber = "5001",
 				Postcode = "Mumbai"
 			}));
 	//msg.Log();
 	return msg;
 }
 
-BrokeredMessage GetSchoolUpdateMessage()
-{
-	var msg = new BrokeredMessage(
-		JsonConvert.SerializeObject(
-			new SchoolUpdateMessage() {
-				//SchoolGuid = Guid.NewGuid(),
-				SchoolGuid = Guid.Parse("f2e1813a-b266-42f2-b786-43e1a5bc3da1"),
-				SchoolName = "Partner Api School",
-				UsesSimsPrimary = true,
-				LeaNumber = "223",
-				SchoolNumber = "4321",
-				Postcode = "Mumbai"
-			}));
-			//msg.Log();
-	return msg;
-}
 
-void SendMessage(BrokeredMessage message)
+void SendSchoolUpdateMessage()
 {
+	var message = GetSchoolSyncMessage();
+	var SchoolUpdate = "SchoolUpdate";
+	var connectionString = "Endpoint=sb://simslabs-servicebus-backbone-local.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=Y31in3tSbHBBBtixD7CXd4YkOG5PNkn5aVRyXnow5jQ=";
 	var client = TopicClient.CreateFromConnectionString(connectionString, SchoolUpdate);
 	client.Send(message);
 }
 
-void SendSchoolSyncMessage()
-{
-	var _connectionString="Endpoint=sb://simscloudintegration-local.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=mw+BmRzVMP1J0UTHfn1zFbd2e7KHqMy89Rg/2oFWU2s=";
-	var _queue = "syncschool-agorapastoral";
-	var client = QueueClient.CreateFromConnectionString(connectionString, _queue);
-	var message = new BrokeredMessage(JsonConvert.SerializeObject(Guid.Parse("f2e1813a-b266-42f2-b786-43e1a5bc3da1")));
-	client.Send(message);
-}
-
-
 void MoveMessageToDeadLetter(string topic, string subscription)
 {
+	var connectionString = "Endpoint=sb://simscloudintegration-local.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=mw+BmRzVMP1J0UTHfn1zFbd2e7KHqMy89Rg/2oFWU2s=";
 	var client = SubscriptionClient.CreateFromConnectionString(connectionString, topic, subscription);
 	Console.WriteLine("Started listening to all messages");
 	var msg = client.Receive(TimeSpan.FromSeconds(5));
 	if (msg == null) return;
 	msg.DeadLetter();
-}
-
-
-void SendMessage(BrokeredMessage message, string topic)
-{
-	var client = TopicClient.CreateFromConnectionString(connectionString, topic);
-	client.Send(message);
 }
 
 void FullProcess()
@@ -135,6 +120,8 @@ void FullProcess()
 
 void CreateTopicAndSubscriptions()
 {
+	var SchoolUpdate = "SchoolUpdate";
+	var connectionString = "Endpoint=sb://simscloudintegration-local.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=mw+BmRzVMP1J0UTHfn1zFbd2e7KHqMy89Rg/2oFWU2s=";
 	var namespaceManager = NamespaceManager.CreateFromConnectionString(connectionString);
 
 	//Create topic
@@ -160,7 +147,7 @@ void CreateTopicAndSubscriptions()
 void SendMessages(List<BrokeredMessage> messages)
 {
 	messages.ForEach(msg => {
-		SendMessage(msg);
+		//SendMessage(msg);
 	});
 	Console.WriteLine("Finished sending all messages");
 }
@@ -203,6 +190,8 @@ List<BrokeredMessage> GetMessages()
 
 void ListenToAllMessages()
 {
+	var SchoolUpdate = "SchoolUpdate";
+	var connectionString = "Endpoint=sb://simscloudintegration-local.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=mw+BmRzVMP1J0UTHfn1zFbd2e7KHqMy89Rg/2oFWU2s=";
 	var client = SubscriptionClient.CreateFromConnectionString(connectionString, SchoolUpdate, AllMessages);
 	Console.WriteLine("Started listening to all messages");
 	while (!tokenSource.IsCancellationRequested)
@@ -220,6 +209,8 @@ void ListenToAllMessages()
 
 void ListenToFilteredMessages()
 {
+	var SchoolUpdate = "SchoolUpdate";
+	var connectionString = "Endpoint=sb://simscloudintegration-local.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=mw+BmRzVMP1J0UTHfn1zFbd2e7KHqMy89Rg/2oFWU2s=";
 	var client = SubscriptionClient.CreateFromConnectionString(connectionString, SchoolUpdate, NewSchool);
 	Console.WriteLine("Started listening to filtered messages");
 	while (!tokenSource.IsCancellationRequested)

@@ -2,15 +2,15 @@
   <NuGetReference>Microsoft.WindowsAzure.ConfigurationManager</NuGetReference>
   <NuGetReference>WindowsAzure.Storage</NuGetReference>
   <Namespace>Microsoft.Azure</Namespace>
-  <Namespace>System.Configuration</Namespace>
   <Namespace>Microsoft.WindowsAzure.Storage</Namespace>
   <Namespace>Microsoft.WindowsAzure.Storage.Table</Namespace>
+  <Namespace>System.Configuration</Namespace>
   <Namespace>System.Threading.Tasks</Namespace>
   <AppConfig>
     <Content>
       <configuration>
         <appSettings>
-          <add key="StorageConnectionString" value="DefaultEndpointsProtocol=https;AccountName=azurefunctions124e824a;AccountKey=vhS+If0yHqAYnVRVpOVaV21f11aUNaamrc+FdIaWpcP3zEmC6/1kiigRtS+xNAIXAh3E68zVDWN1qRpSeQd2pQ==" />
+          <add key="StorageConnectionString" value="DefaultEndpointsProtocol=https;AccountName=scifstoragelocal;AccountKey=WdnMPUbZW/AfJiCAN2ej84D80NLEqszCFvBARcdLayF7QhIAfI362HQ5ydIxJDXy3U1/X321VovT0p/hHFTtSw==" />
         </appSettings>
       </configuration>
     </Content>
