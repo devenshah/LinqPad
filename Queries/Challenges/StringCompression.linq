@@ -2,7 +2,7 @@
 
 void Main()
 {
-	Compress("aabbcdd").WL();
+	Compress("aabbccccdd").Log();
 }
 
 

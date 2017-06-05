@@ -5,7 +5,7 @@ void Main()
 	var arr = new int[] {4,4,1,3,2,58,57,56,32,31,34,35}; 
 	var sortedArr = arr.Skip(1).OrderBy(a => a).ToArray();
 	var shortestDistance = findShortestDistance(sortedArr);
-	PrintNumbersWithShortestDistance(sortedArr, shortestDistance).WL();
+	PrintNumbersWithShortestDistance(sortedArr, shortestDistance).Log();
 }
 
 static int findShortestDistance(int[] sortedArr)
