@@ -1,7 +1,6 @@
 <Query Kind="Program">
   <Connection>
     <ID>c8bb2290-88aa-4023-bad0-be874bb7e0ed</ID>
-    <Persist>true</Persist>
     <Server>(localdb)\MSSQLLocalDB</Server>
     <Database>Northwind</Database>
     <ShowServer>true</ShowServer>
@@ -19,10 +18,26 @@
 void Main()
 {
 	Mapper.Initialize(cfg =>
-	   cfg.CreateMap<Employees, EmployeeDto>().ConvertUsing<EmployeeTypeConverter>());
+	{
+		cfg.CreateMap<string, int?>()
+			.ConvertUsing(new NullIntTypeConverter());
+		cfg.CreateMap<Employees, EmployeeDto>()
+			.ConvertUsing<EmployeeTypeConverter>();
+	});
 
 	var employee = Employees.First(e => e.BirthDate.HasValue);
 	Mapper.Map<EmployeeDto>(employee).Dump();
+}
+
+public class NullIntTypeConverter : ITypeConverter<string, int?>
+{
+	public int? Convert(string source, int? destination, ResolutionContext context)
+	{
+		int i;
+		if ((string.IsNullOrWhiteSpace(source)) || (!int.TryParse(source, out i)))
+			return null;
+		return i;
+	}
 }
 
 public class EmployeeTypeConverter : ITypeConverter<Employees, EmployeeDto>

@@ -1,4 +1,12 @@
-<Query Kind="SQL" />
+<Query Kind="SQL">
+  <Connection>
+    <ID>47055575-be2a-4d08-9dd6-f8313e56edf8</ID>
+    <Persist>true</Persist>
+    <Server>(localdb)\MSSQLLocalDB</Server>
+    <Database>master</Database>
+    <ShowServer>true</ShowServer>
+  </Connection>
+</Query>
 
 /*
 ** Copyright Microsoft, Inc. 1994 - 2000
@@ -23,8 +31,8 @@ EXECUTE (N'CREATE DATABASE Northwind
   LOG ON (NAME = N''Northwind_log'',  FILENAME = N''' + @device_directory + N'northwnd.ldf'')')
 go
 
-exec sp_dboption 'Northwind','trunc. log on chkpt.','true'
-exec sp_dboption 'Northwind','select into/bulkcopy','true'
+--exec sp_dboption 'Northwind','trunc. log on chkpt.','true'
+--exec sp_dboption 'Northwind','select into/bulkcopy','true'
 GO
 
 set quoted_identifier on

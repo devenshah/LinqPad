@@ -1,9 +1,10 @@
 <Query Kind="SQL">
   <Connection>
-    <ID>3dfa1e2c-515c-4d32-8b8b-4fe1d2235ba0</ID>
+    <ID>47055575-be2a-4d08-9dd6-f8313e56edf8</ID>
     <Persist>true</Persist>
+    <Server>(localdb)\MSSQLLocalDB</Server>
     <Database>Northwind</Database>
-    <Server>.\SQLEXPRESS</Server>
+    <ShowServer>true</ShowServer>
   </Connection>
 </Query>
 
