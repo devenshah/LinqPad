@@ -6,6 +6,9 @@
 void Main()
 {
 	var fixture = new Fixture();
+	fixture.Create<int>().Log();
+	fixture.Create<string>().Log();
+	fixture.Create<Guid>().Log();
 
 	//fixture.Build<MyClass>().With(x => x.MyProperty, 10).With(x => x.Person.Name, "Deven").Create().Log();
 	
