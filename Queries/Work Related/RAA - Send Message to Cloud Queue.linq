@@ -19,10 +19,8 @@
 
 void Main()
 {
-	var sitConnString = "DefaultEndpointsProtocol=https;AccountName=5sit;AccountKey=96muMALJQmaDMFnXrcOLLrm+D9T8oCqAqukQ/55D7MsdQL1pUIckjWqQ54nnwrB1ggedHt+Xxpg0vU31rPZdvA==;EndpointSuffix=core.windows.net";
-	var devConnString = "DefaultEndpointsProtocol=https;AccountName=2dev;AccountKey=ChogkZ0DFs3Bq697ypD+EQ9n+emELazh4rX987+2fbJQxGzE5qrdw+XHjD2ljd1s3vgjr1KtCb3fTxmw67S4tQ==";
-	
-	var storageAccount = CloudStorageAccount.Parse(sitConnString);
+	var connString = "";
+	var storageAccount = CloudStorageAccount.Parse(connString);
 		
 	var queueClient = storageAccount.CreateCloudQueueClient();
 	
