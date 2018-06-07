@@ -26,3 +26,4 @@ public class MyClass
 	public int MyProperty { get; set; }
 	public Person Person { get; set; }
 }
+

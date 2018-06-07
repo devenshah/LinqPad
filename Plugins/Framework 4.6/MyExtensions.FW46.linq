@@ -72,4 +72,12 @@ public class Person
 	public string Name { get; set; }
 	[DataMember]
 	public DateTimeOffset DOB { get; set; }
+	[DataMember]
+	public Gender Gender { get; set; }
+}
+
+public enum Gender
+{
+	Female = 1,
+	Male = 2
 }
