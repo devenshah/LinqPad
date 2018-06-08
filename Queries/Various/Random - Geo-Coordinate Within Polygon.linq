@@ -8,8 +8,25 @@ void Main()
 // Define other methods and classes here
 public class Coordinate
 {
-    public double Latitude { set; get; }
-    public double Longitude { set; get; }
+    private double _latitude;
+    public double Latitude
+    {
+        set {
+            if (value < -90 || value > 90) throw new ArgumentOutOfRangeException();
+            _latitude = value;
+        }
+        get {return _latitude;}
+    }
+    private double _longitude;
+    public double Longitude 
+    {
+        set
+        {
+            if (value < -180 || value > 180) throw new ArgumentOutOfRangeException();
+            _longitude = value;
+        }
+        get { return _longitude; }
+    }
 }
 
 private Coordinate[] Calculate(Coordinate location1, Coordinate location2, Coordinate location3,
