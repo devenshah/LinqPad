@@ -1,8 +1,8 @@
 <Query Kind="Program">
   <NuGetReference>Microsoft.WindowsAzure.ConfigurationManager</NuGetReference>
   <NuGetReference>WindowsAzure.Storage</NuGetReference>
-  <Namespace>Microsoft.WindowsAzure.Storage</Namespace>
   <Namespace>Microsoft.Azure</Namespace>
+  <Namespace>Microsoft.WindowsAzure.Storage</Namespace>
   <Namespace>Microsoft.WindowsAzure.Storage.Queue</Namespace>
   <Namespace>System.Runtime.Serialization.Formatters.Binary</Namespace>
   <Namespace>System.Xml.Serialization</Namespace>
@@ -10,7 +10,8 @@
     <Content>
       <configuration>
         <appSettings>
-          <add key="StorageConnectionString" value="DefaultEndpointsProtocol=https;AccountName=functionpocstore;AccountKey=Fj7zTdqOyQBteBzbhMX6KYmbsRExyLPb21r5BIrSJU9EMd7w/B7C8LtsRUbFhxPSyW9wgrO7gN/ZsWvspGksHg==" />
+          <add key="StorageConnectionString" value="UseDevelopmentStorage=true" />
+          <!--add key="ConfigurationStorageConnectionString" value="UseDevelopmentStorage=true" /-->
         </appSettings>
       </configuration>
     </Content>
@@ -19,14 +20,15 @@
 
 void Main()
 {
-	var connString = "";
+	var connString = "DefaultEndpointsProtocol=https;AccountName=5sit;AccountKey=96muMALJQmaDMFnXrcOLLrm+D9T8oCqAqukQ/55D7MsdQL1pUIckjWqQ54nnwrB1ggedHt+Xxpg0vU31rPZdvA==";
+    
 	var storageAccount = CloudStorageAccount.Parse(connString);
 		
 	var queueClient = storageAccount.CreateCloudQueueClient();
 	
-	var queue = queueClient.GetQueueReference("vacancyindexscheduler");
+	var queue = queueClient.GetQueueReference("dailydigestscheduler");
 	
-	//queue.CreateIfNotExists();
+	queue.CreateIfNotExists();
 
 	var msg = new StorageQueueMessage();
 	var message = AzureMessageHelper.SerialiseQueueMessage(msg);

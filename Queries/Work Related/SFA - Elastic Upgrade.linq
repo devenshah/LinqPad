@@ -1,6 +1,8 @@
 <Query Kind="Program">
   <NuGetReference>AutoFixture</NuGetReference>
+  <NuGetReference>Humanizer.Core</NuGetReference>
   <NuGetReference Version="5.6.2">NEST</NuGetReference>
+  <Namespace>AutoFixture</Namespace>
   <Namespace>Elasticsearch.Net</Namespace>
   <Namespace>Nest</Namespace>
   <Namespace>Newtonsoft.Json</Namespace>
@@ -10,7 +12,7 @@
   <Namespace>Newtonsoft.Json.Schema</Namespace>
   <Namespace>Newtonsoft.Json.Serialization</Namespace>
   <Namespace>Purify</Namespace>
-  <Namespace>AutoFixture</Namespace>
+  <Namespace>Humanizer</Namespace>
 </Query>
 
 private ElasticClient client;
@@ -27,7 +29,7 @@ void Main()
     var Nodesettings = new ConnectionSettings(connectionPool, connection, serializers)
         .EnableHttpCompression()
         .InferMappingFor<ApprenticeshipSummary>(m => m.IndexName(aliasName))
-        .DefaultFieldNameInferrer(p => p.ToLowerInvariant())
+        //.DefaultFieldNameInferrer(p => p.ToLowerInvariant())
         .BasicAuthentication("elastic", "changeme");
 
     client = new ElasticClient(Nodesettings);
@@ -40,11 +42,11 @@ void Main()
     
     AddToApprenticeshipIndex();
 
-    GetAllVacancyIds();
-
+    //GetAllVacancyIds();
     
+    //MatchQuery();
     
-    //client.Search<ApprenticeshipSummary>().Documents.Log();
+    //client.Search<ApprenticeshipSummary>(s => s.Sort(q => q.Descending(a => a.PostedDate))).Documents.Log();
 }
 
 private void CreateIndex()
@@ -172,7 +174,7 @@ private void GetAllVacancyIds()
                 .MatchAll()
                 .Scroll(ScrollTimeout));
 
-    var vacancies = new List<int>();
+    var vacancies = new List<string>();
 
     var scrollRequest = new ScrollRequest(scanResults.ScrollId, ScrollTimeout);
     var scrollCount = 0;
@@ -180,7 +182,7 @@ private void GetAllVacancyIds()
     {
         scrollCount++;
 
-        vacancies.AddRange(scanResults.Documents.Select(each => each.Id));
+        vacancies.AddRange(scanResults.Documents.Select(each => each.VacancyReference));
 
         scanResults = client.Scroll<ApprenticeshipSummary>(scrollRequest);
     }
@@ -194,12 +196,27 @@ private void AddToApprenticeshipIndex()
     var count = fixture.Create<byte>();
     $"Created {count} documents".Log();
     
+    var keywords = new List<string> { "child", "children", "child's", "childcare", "child-care", "child care", "caring for children", "child's care", "care for children", "care", "carer", "caring", "cares", "carer's", "health", "health care", "health and care", "health and social care", "health-care"}; 
+    
+    var copy = new Queue();
+
+    Func<string> GetKeyWord = () => {
+        if(copy.Count > 0) return copy.Dequeue().ToString();
+        keywords.ForEach(k => copy.Enqueue(k));
+        return copy.Dequeue().ToString();
+    };       
+
     var apprenticeships = fixture.Build<ApprenticeshipSummary>()
         .With(a => a.Location, new GeoPoint())
-        .Without(a => a.Title)        
+        .Without(a => a.Id)
+        .Without(a => a.Title)
+        .Without(a => a.Description)
         .Do(a => {
             Func<int, string> GetTitle = i => (i % 2) == 1 ? "Apprenticeship" : "Traineeship";
-            a.Title = a.Id + GetTitle(a.Id);           
+            a.Id = fixture.Create<int>();
+            a.Title = $"{GetTitle(a.Id)}: {a.Id.ToWords()} {GetKeyWord()}";
+            var random = new Random();
+            a.Description = GetKeyWord();
         })
         .CreateMany(count);
         
@@ -249,6 +266,7 @@ public class ApprenticeshipSummary
     [Text]
     public ApprenticeshipLevel ApprenticeshipLevel { get; set; }
 
+    //[Keyword]
     public string VacancyReference { get; set; }
 
     public string Category { get; set; }
@@ -321,7 +339,8 @@ public class SearchConfiguration
     public IEnumerable<string> Synonyms => new[] {
         "childcare, child-care, child care",
         "healthcare, health-care, health care",
-        "admin, administration"
+        "admin, administration",
+        "children, child"
     };
 
     public IEnumerable<string> StopwordsBase => new[] {
@@ -372,15 +391,14 @@ public class SearchConfiguration
     };
 }
 
-
 private void TermQuery()
 {
     var request = new SearchRequest<ApprenticeshipSummary>
     {
-        Query = new TermQuery
+        Query = new MatchQuery
         {
-            Field = "title",
-            Value = "traineeship"
+            Field = "vacancyReference", 
+            Query = "VacancyReferencea0aa16e3-c587-413d-bf6d-17fc1cd1876f"
         }
     };
 
@@ -389,22 +407,12 @@ private void TermQuery()
 
 private void MatchQuery()
 {
-    //    var response = client.Search<ApprenticeshipSummary>(s => s
-    //        .Index("apprenticeship")
-    //        .Query(q => q
-    //            .MatchPhrase(m => m
-    //                .Field(f => f.Title)
-    //                .Query("97 Apprenticeship")
-    //            )
-    //        )
-    //    );
-
     var req = new SearchRequest<ApprenticeshipSummary>()
     {
-        Query = new MatchPhraseQuery
+        Query = new MatchQuery
         {
-            Field = Infer.Field<ApprenticeshipSummary>(f => f.Title),
-            Query = "37 Apprenticeship"
+            Field = Infer.Field<ApprenticeshipSummary>(f => f.VacancyReference),
+            Query = "VacancyReference211bf417-2407-4d93-a154-09fca0072a54"
         }
     };
 
