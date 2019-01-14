@@ -20,15 +20,15 @@
 
 void Main()
 {
-	var connString = "DefaultEndpointsProtocol=https;AccountName=5sit;AccountKey=96muMALJQmaDMFnXrcOLLrm+D9T8oCqAqukQ/55D7MsdQL1pUIckjWqQ54nnwrB1ggedHt+Xxpg0vU31rPZdvA==";
+	var connString = "";
     
 	var storageAccount = CloudStorageAccount.Parse(connString);
 		
 	var queueClient = storageAccount.CreateCloudQueueClient();
 	
-	var queue = queueClient.GetQueueReference("dailydigestscheduler");
+	var queue = queueClient.GetQueueReference("savedsearchscheduler");
 	
-	queue.CreateIfNotExists();
+	//queue.CreateIfNotExists();
 
 	var msg = new StorageQueueMessage();
 	var message = AzureMessageHelper.SerialiseQueueMessage(msg);

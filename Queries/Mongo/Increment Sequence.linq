@@ -1,9 +1,5 @@
 <Query Kind="Program">
-  <NuGetReference>CsvHelper</NuGetReference>
-  <NuGetReference>MongoDB.Bson</NuGetReference>
   <NuGetReference>MongoDB.Driver</NuGetReference>
-  <Namespace>CsvHelper</Namespace>
-  <Namespace>CsvHelper.Configuration</Namespace>
   <Namespace>DnsClient</Namespace>
   <Namespace>DnsClient.Protocol</Namespace>
   <Namespace>MongoDB.Bson</Namespace>
@@ -42,57 +38,82 @@
   <Namespace>System.Linq</Namespace>
   <Namespace>System.Net</Namespace>
   <Namespace>System.Security.Authentication</Namespace>
-  <Namespace>System</Namespace>
 </Query>
 
 void Main()
 {
-    var settings = new MongoClientSettings()
-    {
-        Server = new MongoServerAddress("das-test-faa-cdb.documents.azure.com", 10255),
-        UseSsl = true,
-        SslSettings = new SslSettings() { EnabledSslProtocols = SslProtocols.Tls12 },
-        ConnectionMode = ConnectionMode.Direct,
-        Credential = MongoCredential.CreateCredential("admin", "das-test-faa-cdb", <password>)
-        //Credential = new MongoCredential("SCRAM-SHA-1", new MongoInternalIdentity(DatabaseName, UserName), new PasswordEvidence(Password) )
-    };
+    var conventionPack = new ConventionPack { new CamelCaseElementNameConvention() };
+    ConventionRegistry.Register("camelCase", conventionPack, t => true);
+    
+    IncrementSequence();
+}
+
+protected int GetNextNumberInTheSequence()
+{
+    return IncrementSequence().SequenceValue;
+}
+
+protected Sequence IncrementSequence()
+{
+    var collection = GetCollection<Sequence>();
+    var options = new FindOneAndUpdateOptions<Sequence>() { ReturnDocument = MongoDB.Driver.ReturnDocument.After };
+    var filterQuery = Builders<Sequence>.Filter.Eq(f => f.Id, "MySecondSequence");
+    var updateQuery = Builders<Sequence>.Update.Inc(u => u.SequenceValue, 1);
+    var doc = collection.FindOneAndUpdate(
+        filterQuery, 
+        updateQuery, 
+        options);
+    
+    return doc;
+}
+
+protected void ReadSequence()
+{
+    var collection = GetCollection<Sequence>("mySequence");
+
+    var sequence = collection.Find(c => c.Id == "MyFirstSequence").SingleOrDefault();
+
+    sequence.Dump();
+}
+
+
+protected void CreateVacancyDocument()
+{
+    var id = Guid.NewGuid();
+    var collection = GetCollection<Vacancy>("MyDocuments");
+
+    collection.InsertOne(new Vacancy() { Id = id, ReferenceNumber = GetNextNumberInTheSequence(), Title = id.ToString() });
+}
+
+protected IMongoCollection<T> GetCollection<T>(string collectionName)
+{
+    var settings = MongoClientSettings.FromUrl(new MongoUrl("mongodb://localhost:C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==@localhost:10255/admin?ssl=true"));
+    settings.SslSettings = new SslSettings { EnabledSslProtocols = SslProtocols.Tls12 };
 
     var client = new MongoClient(settings);
+    var database = client.GetDatabase("Sandbox");
+    var collection = database.GetCollection<T>(collectionName);
 
-    var database = client.GetDatabase("findapprenticeship");
-    var collection = database.GetCollection<ApplicationDetail>("traineeships");
-
-    var filter = Builders<ApplicationDetail>.Filter.Empty;
-    var totalDocs = collection.Find(filter).Count();
-
-    var doc = collection.Find(filter).Skip(1).First(); //collection.Find(filter).First().Dump();
-    doc.Log();
-    Func<int, Guid, FilterDefinition<ApplicationDetail>> idFilter = (vacancyId, candidateId) => Builders<ApplicationDetail>.Filter.Eq(f => f.Vacancy.Id, vacancyId) & Builders<ApplicationDetail>.Filter.Eq(f => f.CandidateId, candidateId) ;
-
-    collection.UpdateOne(idFilter(doc.Vacancy.Id, doc.CandidateId), Builders<ApplicationDetail>.Update.Set(u => u.Notes, $"Some notes for {doc.Id}"));
-    
-    collection.Find(idFilter(doc.Vacancy.Id, doc.CandidateId)).First().Dump();
+    return collection;
 }
 
-[BsonIgnoreExtraElements]
-public class ApplicationDetail : BaseDocument
-{
-    public string Notes { get; set; }
-    
-    public Guid CandidateId { get; set; }
-    
-    public Vacancy Vacancy { get; set; }
-}
 
-[BsonIgnoreExtraElements]
-public class Vacancy 
-{
-    public int Id { get; set; }
-}
-
-public class BaseDocument
+public class Vacancy
 {
     public Guid Id { get; set; }
-    public DateTime DateCreated { get; set; }
 
+    public int ReferenceNumber { get; set; }
+
+    public string Title { get; set; }
+
+    public DateTime? ClosingDate { get; set; }
+}
+
+
+
+[BsonIgnoreExtraElements]
+public class Sequence
+{
+    public string Id { get; set; }
+    public int SequenceValue { get; set; }
 }

@@ -1,12 +1,34 @@
-<Query Kind="Expression">
-  <Connection>
-    <ID>c8bb2290-88aa-4023-bad0-be874bb7e0ed</ID>
-    <Persist>true</Persist>
-    <Server>(localdb)\MSSQLLocalDB</Server>
-    <Database>EmployeeDb</Database>
-    <ShowServer>true</ShowServer>
-  </Connection>
-</Query>
+<Query Kind="Program" />
 
-AttributeGroups.SelectMany(ag => ag.AttributeValues.Select(av => new { ag.Name, av.Value }))
+void Main()
+{
+    var setO = new SetOutcome();
+    for(var i = 1; i < 3; i++)
+    {
+        var ro = new RuleOutcome();
+        ro.Narrative = $"outer {i}";
+        for (var j=1; j<4; j++)
+        {
+            var roi = new RuleOutcome();
+            roi.Narrative = $"outer {i} inner {j}";
+            ro.Details.Add(roi);
+        }
+        setO.Outcomes.Add(ro);
+    }
+    
+    
+    setO.Outcomes.SelectMany(o => o.Details).Dump();
+    
+    
+}
 
+public class SetOutcome
+{
+    public List<RuleOutcome> Outcomes { get; set; } = new List<RuleOutcome>();
+}
+
+public class RuleOutcome
+{
+    public List<RuleOutcome> Details { get; set; } = new List<RuleOutcome>();
+    public string Narrative { get; set; }
+}
