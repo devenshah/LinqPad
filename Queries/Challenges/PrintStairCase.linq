@@ -2,7 +2,7 @@
 
 void Main()
 {
-	PrintStairCase(10);
+	PrintStairCase(20);
 }
 
 void PrintStairCase(int n)
