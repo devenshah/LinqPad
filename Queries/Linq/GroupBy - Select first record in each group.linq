@@ -1,25 +1,36 @@
-<Query Kind="Statements">
-  <Connection>
-    <ID>d966e7cd-c67b-4523-bac1-0ab83f0e2f76</ID>
-    <Persist>true</Persist>
-    <Server>LocalSql</Server>
-    <Database>CentralIntegration</Database>
-  </Connection>
+<Query Kind="Program">
   <Output>DataGrids</Output>
+  <NuGetReference>Newtonsoft.Json</NuGetReference>
+  <Namespace>Newtonsoft.Json</Namespace>
 </Query>
 
-/*
-public class Milestone
+void Main()
 {
-	public Guid Id { get; set; }
-	public Guid JobId { get; set; }
-	public DateTime CreatedUtc { get; set; }
+    var data = @"
+    { 'People' : [
+        {'Name': 'Deven', Gender:'Male'},
+        {'Name': 'Suman', Gender:'Female'},
+        {'Name': 'Diya', Gender:'Female'}
+    ]}
+    ";
+    
+    var employees = JsonConvert.DeserializeObject<Employees>(data);
+
+    var grouped = employees.People.GroupBy(p => p.Gender).Select(p => new { Gender = p.Key, Employees = p.ToList() });
+    
+    grouped.Dump();
+    
 }
-*/
+
+class Employees
+{
+    public IEnumerable<Employee> People {get; set;}
+}
 
 
+class Employee
+{
+    public string Name { get; set; }
+    public string Gender { get; set; }
+}
 
-Milestones
-	.Where(ms => ms.MilestoneStatusId == new Guid("56521EA9-DF93-4AF9-9AF7-D9DA2DA78FE2"))
-	.GroupBy(ms => ms.JobId)	
-	.Select(ms => ms.OrderBy(m => m.CreatedUtc).First())
