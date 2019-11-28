@@ -11,11 +11,11 @@
     <Content>
       <configuration>
         <appSettings>
-          <add key="Tenant" value="citizenazuresfabisgov.onmicrosoft.com" />
-          <add key="ClientId" value="85f054e9-df35-4646-abb6-7a2efb4a8d48" />
-          <add key="ClientSecret" value="qqCuJGX7lUEODBI/qZS6aeMoZ9J5naEKq2Kl+mQnSpA=" />
-          <add key="IdentifierUri" value="https://citizenazuresfabisgov.onmicrosoft.com/das-provider-relationships-api" />
-          <add key="ApiBaseUrl" value="https://das-test-prelapi-as.azurewebsites.net/" />
+          <add key="Tenant" value="fcsazuresfabisgov.onmicrosoft.com" />
+          <add key="ClientId" value="687ccd1c-c090-469e-99d2-778b026befd7" />
+          <add key="ClientSecret" value="yWfIc2UK8GuHmGVwOUwjfRPEcQD6BshUvMdWLLvY7NE=" />
+          <add key="IdentifierUri" value="https://fcsazuresfabisgov.onmicrosoft.com/das-provider-relationships-api-preprod" />
+          <add key="ApiBaseUrl" value="https://pp-permissions-api.apprenticeships.education.gov.uk/" />
         </appSettings>
       </configuration>
     </Content>
@@ -35,7 +35,7 @@ void Main()
 
 void GetProviderRelationships()
 {
-    var queryData = new[] { new KeyValuePair<string, string>("Ukprn", "10004736"), new KeyValuePair<string, string>("Operation", "Recruitment") };
+    var queryData = new[] { new KeyValuePair<string, string>("Ukprn", "10000536"), new KeyValuePair<string, string>("Operation", "Recruitment") };
 
     var uri = new Uri(AddQueryString($"{_config.ApiBaseUrl}/accountproviderlegalentities", queryData));
 

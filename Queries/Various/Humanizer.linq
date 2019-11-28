@@ -15,7 +15,7 @@
 
 void Main()
 {
-	"months".ToQuantity(40).Dump();
+	"live vacancy".ToQuantity(2).Dump();    
 }
 
 // Define other methods and classes here

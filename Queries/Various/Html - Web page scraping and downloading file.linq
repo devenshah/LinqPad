@@ -32,18 +32,32 @@ void Main()
     var nodes = doc.DocumentNode.SelectNodes("//a");
     var urls = nodes.SelectMany(n => n.Attributes).Where(a => a.Name == "data-url").Select(a => a.DeEntitizeValue);
     
+    var count = 0;
+    
     foreach(var url in urls)
     {
+        count++;
         //url = http://saregamawsa.bc.cdn.bitgravity.com/weekend_radio/audio/2018_12_WCR_iTunes_Hindi_Week_4_Lata_And_Asha_Spl.mp3
         var fileName = url.Split('/').Last(); // fileName = 2018_12_WCR_iTunes_Hindi_Week_4_Lata_And_Asha_Spl.mp3
         var filePath = Path.Combine(sourceFolder, fileName);
-        if(!File.Exists(filePath))
+        if(File.Exists(filePath))
+        {
+            $"WARN: Skipping {fileName}".Dump();
+            continue;
+        }
+        
+        try
         {
             webClient.DownloadFile(url, filePath);
             //HttpUtility.UrlDecode(url).Dump();
-            fileName.Dump();
+            $"SUCCESS: {fileName}".Dump();
+        }
+        catch (Exception ex)
+        {
+            $"ERROR: {fileName} failed due to {ex}".Dump();
         }
     }
+    $"{count} files processed".Dump();
 }
 
 // Define other methods and classes here

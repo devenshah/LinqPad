@@ -44,76 +44,58 @@ void Main()
 {
     var conventionPack = new ConventionPack { new CamelCaseElementNameConvention() };
     ConventionRegistry.Register("camelCase", conventionPack, t => true);
-    
-    IncrementSequence();
+
+    //GetAllUsers();   
+
+    GetEmployerUsersAsync("MKKWNP");a
 }
 
-protected int GetNextNumberInTheSequence()
+public void GetAllUsers()
 {
-    return IncrementSequence().SequenceValue;
-}
-
-protected Sequence IncrementSequence()
-{
-    var collection = GetCollection<Sequence>("mySequence");
-    var options = new FindOneAndUpdateOptions<Sequence>() { ReturnDocument = MongoDB.Driver.ReturnDocument.After };
-    var filterQuery = Builders<Sequence>.Filter.Eq(f => f.Id, "MySecondSequence");
-    var updateQuery = Builders<Sequence>.Update.Inc(u => u.SequenceValue, 1);
-    var doc = collection.FindOneAndUpdate(
-        filterQuery, 
-        updateQuery, 
-        options);
-    
-    return doc;
-}
-
-protected void ReadSequence()
-{
-    var collection = GetCollection<Sequence>("mySequence");
-
-    var sequence = collection.Find(c => c.Id == "MyFirstSequence").SingleOrDefault();
-
-    sequence.Dump();
+    var collection = GetCollection<User>("users");
+    collection.Find(c => 1==1).ToListAsync().Dump();
 }
 
 
-protected void CreateVacancyDocument()
+public void GetEmployerUsersAsync(string accountId)
 {
-    var id = Guid.NewGuid();
-    var collection = GetCollection<Vacancy>("MyDocuments");
-
-    collection.InsertOne(new Vacancy() { Id = id, ReferenceNumber = GetNextNumberInTheSequence(), Title = id.ToString() });
+    var filter = Builders<User>.Filter.AnyEq(u => u.AccountsDeclaredAsLevyPayers, accountId);
+    var collection = GetCollection<User>("users");
+    collection.Find(filter).ToListAsync().Dump();
 }
 
 protected IMongoCollection<T> GetCollection<T>(string collectionName)
 {
-    var settings = MongoClientSettings.FromUrl(new MongoUrl("mongodb://localhost:C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==@localhost:10255/admin?ssl=true"));
+    //var settings = MongoClientSettings.FromUrl(new MongoUrl("mongodb://localhost:C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==@localhost:10255/admin?ssl=true"));
+    var settings = MongoClientSettings.FromUrl(new MongoUrl("mongodb://das-test-rcrt-cdb:y3i8IiTt6qDqSkLhTlGxqYION3mFcw8gRhZ2eynGyztjzog7xTQRXGxCHn0s52MVKOOaLYL4hJGs208JIQtHmw==@das-test-rcrt-cdb.documents.azure.com:10255/admin?ssl=true"));
+    settings.ClusterConfigurator = cb => cb.Subscribe<MongoDB.Driver.Core.Events.CommandStartedEvent>(e => e.Command.ToJson().Log());
+    
     settings.SslSettings = new SslSettings { EnabledSslProtocols = SslProtocols.Tls12 };
 
     var client = new MongoClient(settings);
-    var database = client.GetDatabase("Sandbox");
+    var database = client.GetDatabase("recruit");
     var collection = database.GetCollection<T>(collectionName);
 
     return collection;
 }
 
 
-public class Vacancy
+public class User
 {
     public Guid Id { get; set; }
-
-    public int ReferenceNumber { get; set; }
-
-    public string Title { get; set; }
-
-    public DateTime? ClosingDate { get; set; }
+    public string IdamsUserId { get; set; }
+    public UserType UserType { get; set; }
+    public string Name { get; set; }
+    public string Email { get; set; }
+    public DateTime CreatedDate { get; set; }
+    public DateTime LastSignedInDate { get; set; }
+    public IList<string> AccountsDeclaredAsLevyPayers { get; set; } = new List<string>();
+    public IList<string> EmployerAccountIds { get; set; } = new List<string>();
+    public long? Ukprn { get; set; }
 }
 
-
-
-[BsonIgnoreExtraElements]
-public class Sequence
+public enum UserType
 {
-    public string Id { get; set; }
-    public int SequenceValue { get; set; }
+    Employer,
+    Provider
 }

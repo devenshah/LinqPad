@@ -11,7 +11,8 @@
 
 void Main()
 {
-    var azureADConfig = 
+    // var azureADConfig = 
+    UseStructureMap();    
 }
 
 void UseStructureMap()

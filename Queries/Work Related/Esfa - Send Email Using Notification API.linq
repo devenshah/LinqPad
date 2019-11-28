@@ -1,10 +1,10 @@
 <Query Kind="Program">
   <NuGetReference>SFA.DAS.Notifications.Api.Client</NuGetReference>
   <Namespace>SFA.DAS.Http</Namespace>
+  <Namespace>SFA.DAS.Http.TokenGenerators</Namespace>
   <Namespace>SFA.DAS.Notifications.Api.Client</Namespace>
   <Namespace>SFA.DAS.Notifications.Api.Client.Configuration</Namespace>
   <Namespace>SFA.DAS.Notifications.Api.Types</Namespace>
-  <Namespace>SFA.DAS.Http.TokenGenerators</Namespace>
 </Query>
 
 void Main()

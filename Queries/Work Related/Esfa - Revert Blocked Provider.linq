@@ -1,7 +1,12 @@
 <Query Kind="Program">
+  <NuGetReference>Microsoft.WindowsAzure.ConfigurationManager</NuGetReference>
   <NuGetReference>MongoDB.Driver</NuGetReference>
+  <NuGetReference>WindowsAzure.Storage</NuGetReference>
   <Namespace>DnsClient</Namespace>
   <Namespace>DnsClient.Protocol</Namespace>
+  <Namespace>Microsoft.Azure</Namespace>
+  <Namespace>Microsoft.WindowsAzure.Storage</Namespace>
+  <Namespace>Microsoft.WindowsAzure.Storage.Queue</Namespace>
   <Namespace>MongoDB.Bson</Namespace>
   <Namespace>MongoDB.Bson.IO</Namespace>
   <Namespace>MongoDB.Bson.Serialization</Namespace>
@@ -38,82 +43,72 @@
   <Namespace>System.Linq</Namespace>
   <Namespace>System.Net</Namespace>
   <Namespace>System.Security.Authentication</Namespace>
+  <AppConfig>
+    <Content>
+      <configuration>
+        <appSettings>
+          <add key="StorageConnectionString" value="DefaultEndpointsProtocol=https;AccountName=functionpocstore;AccountKey=Fj7zTdqOyQBteBzbhMX6KYmbsRExyLPb21r5BIrSJU9EMd7w/B7C8LtsRUbFhxPSyW9wgrO7gN/ZsWvspGksHg==" />
+        </appSettings>
+      </configuration>
+    </Content>
+  </AppConfig>
 </Query>
 
 void Main()
+{ 
+    var ukprn = 1000400;
+    DeleteBlockedOrganisation(ukprn.ToString());
+    UpdateQueryStore();
+}
+
+void DeleteBlockedOrganisation(string ukprn)
 {
-    var conventionPack = new ConventionPack { new CamelCaseElementNameConvention() };
-    ConventionRegistry.Register("camelCase", conventionPack, t => true);
+    var collection = GetCollection<BlockedOrganisation>("blockedOrganisations");
+    var filterBuilder = Builders<BlockedOrganisation>.Filter;
+
+    var filter = filterBuilder.Eq("organisationId", ukprn);
     
-    IncrementSequence();
-}
-
-protected int GetNextNumberInTheSequence()
-{
-    return IncrementSequence().SequenceValue;
-}
-
-protected Sequence IncrementSequence()
-{
-    var collection = GetCollection<Sequence>("mySequence");
-    var options = new FindOneAndUpdateOptions<Sequence>() { ReturnDocument = MongoDB.Driver.ReturnDocument.After };
-    var filterQuery = Builders<Sequence>.Filter.Eq(f => f.Id, "MySecondSequence");
-    var updateQuery = Builders<Sequence>.Update.Inc(u => u.SequenceValue, 1);
-    var doc = collection.FindOneAndUpdate(
-        filterQuery, 
-        updateQuery, 
-        options);
+    //collection.Find(filter).ToList().Dump();
     
-    return doc;
-}
-
-protected void ReadSequence()
-{
-    var collection = GetCollection<Sequence>("mySequence");
-
-    var sequence = collection.Find(c => c.Id == "MyFirstSequence").SingleOrDefault();
-
-    sequence.Dump();
-}
-
-
-protected void CreateVacancyDocument()
-{
-    var id = Guid.NewGuid();
-    var collection = GetCollection<Vacancy>("MyDocuments");
-
-    collection.InsertOne(new Vacancy() { Id = id, ReferenceNumber = GetNextNumberInTheSequence(), Title = id.ToString() });
+    collection.DeleteOne(filter).Dump(); 
 }
 
 protected IMongoCollection<T> GetCollection<T>(string collectionName)
 {
-    var settings = MongoClientSettings.FromUrl(new MongoUrl("mongodb://localhost:C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==@localhost:10255/admin?ssl=true"));
+    var settings = MongoClientSettings.FromUrl(new MongoUrl("mongodb://das-test-rcrt-cdb:y3i8IiTt6qDqSkLhTlGxqYION3mFcw8gRhZ2eynGyztjzog7xTQRXGxCHn0s52MVKOOaLYL4hJGs208JIQtHmw==@das-test-rcrt-cdb.documents.azure.com:10255/?ssl=true&replicaSet=globaldb"));
     settings.SslSettings = new SslSettings { EnabledSslProtocols = SslProtocols.Tls12 };
 
     var client = new MongoClient(settings);
-    var database = client.GetDatabase("Sandbox");
+    var database = client.GetDatabase("recruit");
     var collection = database.GetCollection<T>(collectionName);
 
     return collection;
 }
 
-
-public class Vacancy
+public class BlockedOrganisation
 {
-    public Guid Id { get; set; }
-
-    public int ReferenceNumber { get; set; }
-
-    public string Title { get; set; }
-
-    public DateTime? ClosingDate { get; set; }
+    [BsonId(IdGenerator = typeof(StringObjectIdGenerator))]
+    public ObjectId Id { get; set; }
+    public string organisationType { get; set; }
+    public string organisationId { get; set; }
+    public string blockedStatus { get; set; }
+    public DateTime updatedDate { get; set; }
+    public string reason { get; set; }
+    public object updatedByUser { get; set; }
 }
 
-
-
-[BsonIgnoreExtraElements]
-public class Sequence
+void UpdateQueryStore()
 {
-    public string Id { get; set; }
-    public int SequenceValue { get; set; }
+    var storageAccount = CloudStorageAccount.Parse("DefaultEndpointsProtocol=https;AccountName=dastestrcrtstr;AccountKey=B2rLvVVP6a7yT3y+LfQE5n5wAEokaNC54bssNPNQkz5DkvPNos+LpwqLm1vqYKHdtdIB8BULHNf0dbldCYQzQQ==;EndpointSuffix=core.windows.net");
+		
+	var queueClient = storageAccount.CreateCloudQueueClient();
+	
+	var queue = queueClient.GetQueueReference("generate-all-blocked-organisations-queue");
+	
+	queue.CreateIfNotExists();
+
+	var message = new CloudQueueMessage("Bazinga!!!");
+	queue.AddMessage(message);
+
 }
+
