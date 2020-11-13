@@ -39,15 +39,7 @@ void Main()
     var config = MyExtensions.GetConfiguration<AccountApiConfiguration>();
     var client = new AccountApiClient(config);
 
-    //var userId = "4bcfe590-3b1f-418c-b71d-a6778916bbdd";    
-    //client.GetUserAccounts(userId).Result.Dump();
-    
-    var accountHash = "VJ467D";
-    var result = client.GetLegalEntitiesConnectedToAccount(accountHash).Result;
+    var accountId = 27446;
+    var result = client.GetAccount(accountId).Result;
     result.Dump();
-    var legalEntity = result.FirstOrDefault(l => l.Id == "8736");
-    if (legalEntity != null)
-    {
-        client.GetLegalEntity(accountHash, long.Parse(legalEntity.Id)).Result.Dump();
-    }    
 }

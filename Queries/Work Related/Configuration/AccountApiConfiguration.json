@@ -1,0 +1,10 @@
+{
+  "AccountApiConfiguration":
+  {
+	"Tenant" : "citizenazuresfabisgov.onmicrosoft.com" ,
+	"ClientId" : "0a25a495-140e-4f9f-807b-11e2fa115375",
+	"ClientSecret" : "4P1BXocY29?._gKW:GV.2pHAYrVBz=KI",
+	"IdentifierUri" : "https://citizenazuresfabisgov.onmicrosoft.com/eas-api",
+	"ApiBaseUrl" : "https://test-accounts.apprenticeships.education.gov.uk/"
+  }
+}

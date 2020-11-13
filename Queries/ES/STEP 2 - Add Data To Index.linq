@@ -52,4 +52,3 @@ private void GetDocuments()
 {
     client.Search<Person>(c => c.Size(50)).Documents.Log();
 }
-

@@ -21,7 +21,7 @@
 
 void Main()
 {
-	const string LocalConnString = "UseDevelopmentStorage=true";
+	const string LocalConnString = "DefaultEndpointsProtocol=https;AccountName=dastestfaastr;AccountKey=2EXPZP8hqTNyznS//slzi8jgkYftkdQKoOFdZhwsISVGLPpCwH671OkjGhOL5BHTud6TFqe2Z8qMvUQlsKPPPw==;EndpointSuffix=core.windows.net";
 	const string DevConnString = "DefaultEndpointsProtocol=https;AccountName=2dev;AccountKey=ChogkZ0DFs3Bq697ypD+EQ9n+emELazh4rX987+2fbJQxGzE5qrdw+XHjD2ljd1s3vgjr1KtCb3fTxmw67S4tQ==;"; //DEV
 	const string SitConnString = "DefaultEndpointsProtocol=https;AccountName=5sit;AccountKey=96muMALJQmaDMFnXrcOLLrm+D9T8oCqAqukQ/55D7MsdQL1pUIckjWqQ54nnwrB1ggedHt+Xxpg0vU31rPZdvA=="; // SIT
 	const string PreConnString = "DefaultEndpointsProtocol=https;AccountName=1pre;AccountKey=n4suo0+q94bq4Lf3dbmtGSQeUXI7rKw+70i0hNvmtYUMBGICOGTQUwlJWmFlSBpI+COpAHdrmcpOsDVNdlI/HA=="; // PRE
@@ -43,7 +43,7 @@ void Main()
 
 	// =======================
 	// CHANGE THESE TWO VALUES
-	const string ConnString = SitConnString;
+	const string ConnString = LocalConnString;
 	const string QueueName = DailyDigest;
 	// =======================
 
@@ -52,8 +52,8 @@ void Main()
 
 	Console.WriteLine("Connecting");
 	var queue = queueClient.GetQueueReference(QueueName);
-	Console.WriteLine("Creating queue");
-	queue.CreateIfNotExists();
+//	Console.WriteLine("Creating queue");
+//	queue.CreateIfNotExists();
 	var msg = new StorageQueueMessage();
 	var message = AzureMessageHelper.SerialiseQueueMessage(msg);
 	Console.WriteLine("Queuing message");

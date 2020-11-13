@@ -26,9 +26,9 @@ void Main()
 		
 	var queueClient = storageAccount.CreateCloudQueueClient();
 	
-	var queue = queueClient.GetQueueReference("savedsearchscheduler");
+	var queue = queueClient.GetQueueReference("vacancyindexscheduler");
 	
-	//queue.CreateIfNotExists();
+	queue.CreateIfNotExists();
 
 	var msg = new StorageQueueMessage();
 	var message = AzureMessageHelper.SerialiseQueueMessage(msg);
@@ -37,12 +37,12 @@ void Main()
 }
 
 public class AzureMessageHelper
+{
+    public static T DeserialiseQueueMessage<T>(CloudQueueMessage queueMessage)
     {
-        public static T DeserialiseQueueMessage<T>(CloudQueueMessage queueMessage)
-        {
-            T scheduledQueueMessage;
+        T scheduledQueueMessage;
 
-            var dcs = new XmlSerializer(typeof(T));
+        var dcs = new XmlSerializer(typeof(T));
 
 		using (var xmlstream = new MemoryStream(Encoding.Unicode.GetBytes(queueMessage.AsString)))
 		{

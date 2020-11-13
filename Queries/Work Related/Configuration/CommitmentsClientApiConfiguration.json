@@ -1,0 +1,11 @@
+{
+	"gello":"world",
+    "CommitmentsClientApiConfiguration": 
+    {
+        "ApiBaseUrl": "https://test-commitments-api.apprenticeships.education.gov.uk/",
+        "IdentifierUri": "https://citizenazuresfabisgov.onmicrosoft.com/das-commitments-api",
+        "Tenant": "citizenazuresfabisgov.onmicrosoft.com",
+        "ClientSecret": "ugFE3Z8D-0P9_6RNU1-FZ0P5b~-l.7qD~.",
+        "ClientId": "40d4197a-f7a9-490c-a5b3-0a46d6948721"
+    }
+}

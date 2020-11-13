@@ -1,13 +1,11 @@
 <Query Kind="SQL">
   <Connection>
     <ID>c8bb2290-88aa-4023-bad0-be874bb7e0ed</ID>
-    <Persist>true</Persist>
     <Server>(localdb)\MSSQLLocalDB</Server>
     <Database>EmployeeDb</Database>
     <ShowServer>true</ShowServer>
   </Connection>
 </Query>
-
 
 WITH DirectReports (ManagerID, EmployeeID, Title, DeptID, Level)
 AS
@@ -29,6 +27,7 @@ AS
         ON e.ManagerID = d.EmployeeID --join between previous and current record
 )
 -- Statement that executes the CTE
+-- CTE can only be used in one statement
 SELECT ManagerID, EmployeeID, Title, DeptID, Level
 FROM DirectReports
 

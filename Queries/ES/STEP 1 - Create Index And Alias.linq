@@ -68,6 +68,3 @@ private void AddToAlias(string indexName)
     //add new association to alias
     client.Alias(a => a.Add(add => add.Alias(aliasName).Index(indexName)));
 }
-
-
-
