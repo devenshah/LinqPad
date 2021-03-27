@@ -30,6 +30,11 @@ public static class MyExtensions
             .AddJsonFile($"appsettings.json")
             .Build();
     }
+    
+    public static void Log(this object value)
+    {
+        value.Dump();
+    }
 }
 
 

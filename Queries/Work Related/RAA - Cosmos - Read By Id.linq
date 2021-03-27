@@ -19,11 +19,11 @@ private async Task GetDocumentById()
 {
     var settings = new MongoClientSettings
     {
-        Server = new MongoServerAddress("das-pp-faa-cdb.documents.azure.com", 10255),
+        Server = new MongoServerAddress("", 10255),
         UseSsl = true,
         SslSettings = new SslSettings() { EnabledSslProtocols = SslProtocols.Tls12 },
         ConnectionMode = ConnectionMode.Direct,
-        Credential = MongoCredential.CreateCredential("admin", "das-pp-faa-cdb", "tH9Haoz8nYm823ZWLoQLd1PlGIDVdib9GiNFnAl29095TcK21Zbq3jo3YboyMlrpz9V2UqCzYDxgJcdN1kJBMA==")
+        Credential = MongoCredential.CreateCredential("admin", "", "")
     };
 
     var client = new MongoClient(settings);
