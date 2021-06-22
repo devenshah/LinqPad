@@ -35,7 +35,6 @@
   <Namespace>MongoDB.Driver.GeoJsonObjectModel.Serializers</Namespace>
   <Namespace>MongoDB.Driver.Linq</Namespace>
   <Namespace>System.Buffers</Namespace>
-  <Namespace>System.Linq</Namespace>
   <Namespace>System.Net</Namespace>
   <Namespace>System.Security.Authentication</Namespace>
 </Query>
@@ -66,8 +65,7 @@ public void GetEmployerUsersAsync(string accountId)
 
 protected IMongoCollection<T> GetCollection<T>(string collectionName)
 {
-    //var settings = MongoClientSettings.FromUrl(new MongoUrl("mongodb://localhost:C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==@localhost:10255/admin?ssl=true"));
-    var settings = MongoClientSettings.FromUrl(new MongoUrl("mongodb://das-test-rcrt-cdb:y3i8IiTt6qDqSkLhTlGxqYION3mFcw8gRhZ2eynGyztjzog7xTQRXGxCHn0s52MVKOOaLYL4hJGs208JIQtHmw==@das-test-rcrt-cdb.documents.azure.com:10255/admin?ssl=true"));
+    var settings = MongoClientSettings.FromUrl(new MongoUrl("mongodb://localhost:C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==@localhost:10255/admin?ssl=true"));
     settings.ClusterConfigurator = cb => cb.Subscribe<MongoDB.Driver.Core.Events.CommandStartedEvent>(e => e.Command.ToJson().Log());
     
     settings.SslSettings = new SslSettings { EnabledSslProtocols = SslProtocols.Tls12 };

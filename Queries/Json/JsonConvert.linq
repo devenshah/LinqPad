@@ -20,6 +20,30 @@ void Main()
 	property2.Dump();
 }
 
+void Main1()
+{
+	var date = $"{{'orderDate':'2021-06-21T09:56:16.4249998+01:00'}}";
+
+	var order = JsonConvert.DeserializeObject<Order>(date);
+
+	order.OrderDate.ToString("o").Dump($"with timezone, expect same {order.OrderDate.Kind}");
+
+	date = $"{{'orderDate':'2021-06-21T09:56:16.4249998'}}";
+
+	order = JsonConvert.DeserializeObject<Order>(date);
+
+	order.OrderDate.ToString("o").Dump($"No timezone, expect local {order.OrderDate.Kind}");
+
+	date = $"{{'orderDate':'2021-06-21T09:56:16.4249998Z'}}";
+
+	order = JsonConvert.DeserializeObject<Order>(date);
+
+	order.OrderDate.ToString("o").Dump($"No timezone, expect local {order.OrderDate.Kind}");
+
+
+	//2021-06-21T09:56:16.4249998+01:00
+}
+
 Property GetProperty()
 {
 	var p = new Property{ PropertyId = 1, Address="Solihul"};

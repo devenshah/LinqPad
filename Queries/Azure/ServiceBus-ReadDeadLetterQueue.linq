@@ -27,7 +27,7 @@
 
 void Main()
 {
-	var connString = "Endpoint=sb://etech-etech-dev.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=2a99ZavJbHvrYrRfPJ9VTsrX9pzNUqkzoRyQXnGGhHY=";
+	var connString = "";
 	var queueName = "milestoneresponsequeue";
 	queueName = QueueClient.FormatDeadLetterPath(queueName);
 	
