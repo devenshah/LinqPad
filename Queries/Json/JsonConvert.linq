@@ -44,6 +44,11 @@ void Main1()
 	//2021-06-21T09:56:16.4249998+01:00
 }
 
+class Order
+{
+	public DateTime OrderDate { get; set; }
+}
+
 Property GetProperty()
 {
 	var p = new Property{ PropertyId = 1, Address="Solihul"};
