@@ -1,5 +1,5 @@
 <Query Kind="Program">
-  <Reference Relative="..\Work Related\appsettings.json">C:\Deven\Git\LinqPad\Queries\Work Related\appsettings.json</Reference>
+  <Reference Relative="..\Work Related\appsettings.json">C:\Git\LinqPad\Queries\Work Related\appsettings.json</Reference>
   <NuGetReference>System.Net.Http.Json</NuGetReference>
   <Namespace>Microsoft.Extensions.Configuration</Namespace>
   <Namespace>Microsoft.Extensions.DependencyInjection</Namespace>

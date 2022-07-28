@@ -1,0 +1,35 @@
+<Query Kind="Program">
+  <NuGetReference>AutoFixture</NuGetReference>
+  <NuGetReference>Newtonsoft.Json</NuGetReference>
+  <Namespace>AutoFixture</Namespace>
+  <Namespace>System.Text.Json</Namespace>
+  <Namespace>Newtonsoft.Json</Namespace>
+</Query>
+
+void Main()
+{
+	var fixture = new Fixture();
+	
+	var person = fixture.Create<Person>();
+
+	System.Text.Json.JsonSerializer.Serialize(person).Dump();
+		
+	JsonConvert.DeserializeObject<Person>("{'Name':'Name38015580-0290-483f-b765-70b6ef0c9540','Gender':'Female'}").Dump();
+	JsonConvert.DeserializeObject<Person>("{'Name':'Name38015580-0290-483f-b765-70b6ef0c9540','Gender':'male'}").Dump();
+	JsonConvert.DeserializeObject<Person>("{'Name':'Name38015580-0290-483f-b765-70b6ef0c9540','Gender':0}").Dump();
+	JsonConvert.DeserializeObject<Person>("{'Name':'Name38015580-0290-483f-b765-70b6ef0c9540','Gender':1}").Dump();
+	//System.Text.Json.JsonSerializer.Deserialize<Person>("{'Name':'Name38015580-0290-483f-b765-70b6ef0c9540','Gender':'Female'}").Dump();
+}
+
+public class Person 
+{
+	public string Name { get; set; }
+	public Gender Gender { get; set; }
+}
+
+public enum Gender
+{
+	Unknown = -1,
+	Female = 0,
+	Male = 1
+}

@@ -1,17 +1,44 @@
-<Query Kind="Statements">
+<Query Kind="Program">
   <Namespace>System.Globalization</Namespace>
 </Query>
 
-var invalidDate = "text";
-$"{invalidDate:yyMMdd}".Dump(); //dumps text
+void Main()
+{
+	var invalidDate = "text";
+	$"{invalidDate:yyMMdd}".Dump(); //dumps text
+	
+	var validDate = DateTime.Now;
+	$"{validDate:yy-MM-dd}".Dump(); //dumps date
+	
+	$"{validDate:o}".Dump("round trip"); 
+	
+	$"{validDate:d}".Dump("round trip");
+	
+	
+	DateTime.TryParseExact("20210502", "yyyyMMdd", null, DateTimeStyles.AssumeUniversal, out var result);
+	result.Dump();
+	
+	
+}
 
-var validDate = DateTime.Now;
-$"{validDate:yy-MM-dd}".Dump(); //dumps date
+void Main1()
+{
+	string Date = "20200709";
+	string Time = "125000";
 
-$"{validDate:o}".Dump("round trip"); 
+	DateTime.ParseExact(Date + Time, "yyyyMMddHHmmss", CultureInfo.InvariantCulture, DateTimeStyles.AssumeLocal).Dump();
+}
 
-$"{validDate:d}".Dump("round trip");
+void Main2()
+{
+	var d = DateTime.Now;
+	var e = DateTime.UtcNow;
+	$"{d:s} and {e:s}".Dump();
+
+	//d = new DateTime(2021, 10, 27, 23, 59, 59, DateTimeKind.)
+
+	var o = new DateTimeOffset(2021, 10, 27, 23, 59, 59, 0, TimeSpan.FromHours(-5));
+	o.UtcDateTime.Dump();
+}
 
 
-DateTime.TryParseExact("20210502", "yyyyMMdd", null, DateTimeStyles.AssumeUniversal, out var result);
-result.Dump();

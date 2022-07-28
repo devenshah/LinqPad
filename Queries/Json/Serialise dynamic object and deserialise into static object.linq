@@ -14,4 +14,15 @@ void Main()
     
 }
 
-// Define other methods and classes here
+void Main1()
+{
+	//OBJECT serialisation works for generic purpose
+	object person = new Person() {Name="Gandhi", Gender="male"};
+	JsonConvert.SerializeObject(person).Dump();	
+}
+
+class Person
+{
+	public string Name { get; set; }
+	public string Gender { get; set; }
+}
