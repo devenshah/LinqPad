@@ -1,7 +1,6 @@
 <Query Kind="SQL">
   <Connection>
     <ID>47055575-be2a-4d08-9dd6-f8313e56edf8</ID>
-    <Persist>true</Persist>
     <Server>(localdb)\MSSQLLocalDB</Server>
     <Database>Northwind</Database>
     <ShowServer>true</ShowServer>
@@ -19,7 +18,13 @@
 --		...windowing-clause...) AS coumn-name
 
 
-
+-- get total number of rows for given criteria excluding paging
+select OrderID, CustomerID, EmployeeID, OrderDate, count(*) over() total 
+from [Orders]  
+where EmployeeID > 5
+order by OrderDate Desc
+OFFSET 10 ROWS
+FETCH NEXT 10 ROWS ONLY
 
 -- get no of times product has been ordered
 select od.*,
@@ -110,14 +115,17 @@ WITH myQuery as (
 	from [order details] od
 	inner join products p on od.productid = p.productid
 	group by p.supplierid, p.productname)
-select supplierid, productname, totalorder,
+select 
+	supplierid, 
+	productname, 
+	totalorder,
 	last_value(totalorder) 
-	over (partition by supplierid
+		over (partition by supplierid
 		order by totalorder
 		ROWS BETWEEN UNBOUNDED PRECEDING
-			AND UNBOUNDED FOLLOWING) as toporder,
+		AND UNBOUNDED FOLLOWING) as toporder,
 	first_value(totalorder) 
-	over (partition by supplierid
+		over (partition by supplierid
 		order by totalorder) as lowestorder
 from myquery
 order by supplierid, productname
